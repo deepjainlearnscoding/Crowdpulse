@@ -61,7 +61,7 @@ document.querySelectorAll('.nav-links a').forEach(l => l.addEventListener('click
 document.addEventListener('keydown', e => { if (e.key==='Escape') nav.classList.remove('menu-open'); });
 
 // ── SCROLL REVEAL ─────────────────────────
-const reveals = document.querySelectorAll('.fcard,.mct,.pc,.hlc,.arch-step,.phone-wrap');
+const reveals = document.querySelectorAll('.fcard,.mct,.pc,.hlc,.arch-step,.phone-wrap,.ssm-animate');
 const obs = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
@@ -346,6 +346,469 @@ const wbObs = new IntersectionObserver(entries => {
 document.querySelectorAll('.fcard').forEach(c => wbObs.observe(c));
 
 console.log('%c⚡ StadiumIQ — Smart Stadium Experience System','color:#4f8ef7;font-size:1rem;font-weight:bold;background:#050810;padding:8px 16px;border-radius:8px;');
+
+// ── SMART SAFETY MAP — IPL India venues ─────
+(function initSmartSafetyMap() {
+  const sel = document.getElementById('ssm-stadium');
+  const titleEl = document.getElementById('ssm-venue-title');
+  const metaEl = document.getElementById('ssm-venue-meta');
+  const occEl = document.getElementById('ssm-occupancy-val');
+  const tickEl = document.getElementById('ssm-updated');
+  const zoneList = document.getElementById('ssm-zone-list');
+  const gateList = document.getElementById('ssm-gate-list');
+  const medList = document.getElementById('ssm-med-list');
+  const layerPitch = document.getElementById('ssm-layer-pitch');
+  const layerZones = document.getElementById('ssm-layer-zones');
+  const layerMed = document.getElementById('ssm-layer-medical');
+  const layerGates = document.getElementById('ssm-layer-gates');
+  if (!sel || !layerZones) return;
+
+  const CX = 220;
+  const CY = 198;
+  const R_IN = 56;
+  const R_OUT = 138;
+  const R_GATE = 156;
+  const R_MED = 92;
+
+  const SSM_STADIUMS = {
+    'narendra-modi': {
+      name: 'Narendra Modi Stadium',
+      city: 'Ahmedabad, Gujarat',
+      cap: 132000,
+      note: 'IPL final venue · world’s largest cricket stadium',
+      zones: ['North Upper', 'North Lower', 'NE Pavilion', 'East Premium', 'East General', 'South Upper', 'South Lower', 'SW Club', 'West Upper', 'West Lower'],
+      gates: [
+        { label: 'Gate A — North', a: 4 },
+        { label: 'Gate B — NE', a: 52 },
+        { label: 'Gate C — East', a: 108 },
+        { label: 'Gate D — SE', a: 144 },
+        { label: 'Gate E — South', a: 184 },
+        { label: 'Gate F — SW', a: 232 },
+        { label: 'Gate G — West', a: 288 },
+        { label: 'Gate H — NW', a: 328 },
+      ],
+      medical: [
+        { label: 'MCA Medical Centre', a: 18 },
+        { label: 'First Aid — East', a: 112 },
+        { label: 'Paramedic Post — South', a: 198 },
+        { label: 'Ambulance Bay — West', a: 270 },
+      ],
+      hot: [0, 1, 4],
+    },
+    wankhede: {
+      name: 'Wankhede Stadium',
+      city: 'Mumbai, Maharashtra',
+      cap: 33000,
+      note: 'IPL · MCA home ground',
+      zones: ['Garware End', 'North Stand', 'VN Suptd Stand', 'Sachin Stand', 'East Stand', 'Sunil Gavaskar', 'Dilip Vengsarkar', 'West Stand', 'MCA Pavilion', 'South Pavilion'],
+      gates: [
+        { label: 'Gate 1 — Garware', a: 12 },
+        { label: 'Gate 2 — North', a: 58 },
+        { label: 'Gate 3 — East', a: 118 },
+        { label: 'Gate 4 — South', a: 185 },
+        { label: 'Gate 5 — West', a: 242 },
+        { label: 'Gate 6 — Pavilion', a: 302 },
+      ],
+      medical: [
+        { label: 'Medical Room — North', a: 40 },
+        { label: 'St John Ambulance — East', a: 125 },
+        { label: 'First Aid — West', a: 255 },
+      ],
+      hot: [1, 2, 5],
+    },
+    eden: {
+      name: 'Eden Gardens',
+      city: 'Kolkata, West Bengal',
+      cap: 66000,
+      note: 'IPL · CAB · historic venue',
+      zones: ['B.C. Roy Clubhouse', 'Pavilion Terrace', 'Kolkata Knight Riders', 'Long Room', 'B Block Upper', 'D Block', 'H Block', 'Club House', 'River Side', 'Green Roof'],
+      gates: [
+        { label: 'Gate 1 — Clubhouse', a: 8 },
+        { label: 'Gate 2 — A-D', a: 72 },
+        { label: 'Gate 3 — E-H', a: 140 },
+        { label: 'Gate 4 — River', a: 200 },
+        { label: 'Gate 5 — Pavilion', a: 265 },
+        { label: 'Gate 6 — KKR', a: 320 },
+      ],
+      medical: [
+        { label: 'CAB Medical Bay', a: 30 },
+        { label: 'Red Cross Post', a: 155 },
+        { label: 'Ambulance — Gate 4', a: 205 },
+      ],
+      hot: [0, 4, 5],
+    },
+    chinnaswamy: {
+      name: 'M. Chinnaswamy Stadium',
+      city: 'Bengaluru, Karnataka',
+      cap: 40000,
+      note: 'IPL · KSCA · RCB home',
+      zones: ['Pavilion Deck', 'Corporate North', 'North East', 'East Stand', 'South East', 'South West', 'West Upper', 'West Lower', 'RCB Fan Zone', 'Hill Stand'],
+      gates: [
+        { label: 'Gate A — Pavilion', a: 6 },
+        { label: 'Gate B — North', a: 64 },
+        { label: 'Gate C — East', a: 124 },
+        { label: 'Gate D — South', a: 188 },
+        { label: 'Gate E — West', a: 248 },
+        { label: 'Gate F — Hill', a: 310 },
+      ],
+      medical: [
+        { label: 'KSCA Medical', a: 20 },
+        { label: 'First Aid — East', a: 120 },
+        { label: 'Paramedic — South', a: 195 },
+      ],
+      hot: [8, 9, 3],
+    },
+    kotla: {
+      name: 'Arun Jaitley Stadium',
+      city: 'New Delhi',
+      cap: 42000,
+      note: 'IPL · DDCA · Kotla',
+      zones: ['North Pavilion', 'Old Club', 'East Upper', 'East Lower', 'Ambedkar', 'South Pavilion', 'West Upper', 'West Lower', 'Hill Road End', 'Ganga Stand'],
+      gates: [
+        { label: 'Gate 1 — North', a: 10 },
+        { label: 'Gate 2 — East', a: 85 },
+        { label: 'Gate 3 — South', a: 175 },
+        { label: 'Gate 4 — West', a: 265 },
+        { label: 'Gate 5 — Pavilion', a: 330 },
+      ],
+      medical: [
+        { label: 'DDCA Medical Room', a: 45 },
+        { label: 'First Aid — South', a: 180 },
+      ],
+      hot: [2, 3, 6],
+    },
+    chepauk: {
+      name: 'M. A. Chidambaram Stadium',
+      city: 'Chennai, Tamil Nadu',
+      cap: 50000,
+      note: 'IPL · TNCA · Chepauk · CSK home',
+      zones: ['Anna Pavilion', 'Wallajah', 'North Stand', 'East Upper', 'East Lower', 'South Pavilion', 'West Upper', 'West Lower', 'I Stand', 'K Stand'],
+      gates: [
+        { label: 'Gate A — Anna', a: 5 },
+        { label: 'Gate B — North', a: 55 },
+        { label: 'Gate C — East', a: 115 },
+        { label: 'Gate D — South', a: 185 },
+        { label: 'Gate E — West', a: 245 },
+        { label: 'Gate F — I/K', a: 305 },
+      ],
+      medical: [
+        { label: 'TNCA Medical', a: 25 },
+        { label: 'Red Cross — East', a: 118 },
+        { label: 'Ambulance — South', a: 192 },
+      ],
+      hot: [0, 4, 5],
+    },
+    hyderabad: {
+      name: 'Rajiv Gandhi Intl Cricket Stadium',
+      city: 'Hyderabad, Telangana',
+      cap: 55000,
+      note: 'IPL · HCA · SRH home',
+      zones: ['North Pavilion', 'East Premium', 'East Upper', 'South Pavilion', 'West Premium', 'North East', 'South East', 'South West', 'North West', 'Grass Banks'],
+      gates: [
+        { label: 'Gate 1 — North', a: 8 },
+        { label: 'Gate 2 — East', a: 88 },
+        { label: 'Gate 3 — South', a: 178 },
+        { label: 'Gate 4 — West', a: 268 },
+        { label: 'Gate 5 — VIP', a: 328 },
+      ],
+      medical: [
+        { label: 'HCA Medical Bay', a: 42 },
+        { label: 'First Aid — South', a: 185 },
+      ],
+      hot: [1, 2, 5],
+    },
+    lucknow: {
+      name: 'BRSABV Ekana Cricket Stadium',
+      city: 'Lucknow, Uttar Pradesh',
+      cap: 50000,
+      note: 'IPL · LSG home',
+      zones: ['North Gallery', 'East Gallery', 'South Gallery', 'West Gallery', 'Premium North', 'Premium East', 'Premium South', 'Premium West', 'Terrace North', 'Terrace South'],
+      gates: [
+        { label: 'Gate 1', a: 15 },
+        { label: 'Gate 2', a: 75 },
+        { label: 'Gate 3', a: 135 },
+        { label: 'Gate 4', a: 195 },
+        { label: 'Gate 5', a: 255 },
+        { label: 'Gate 6', a: 315 },
+      ],
+      medical: [
+        { label: 'Ekana Medical Post', a: 50 },
+        { label: 'First Aid — West', a: 270 },
+      ],
+      hot: [4, 5, 0],
+    },
+    dharamshala: {
+      name: 'HPCA Stadium',
+      city: 'Dharamshala, Himachal Pradesh',
+      cap: 23000,
+      note: 'IPL scenic venue · HPCA',
+      zones: ['Snow View North', 'East Stand', 'South Pavilion', 'West Stand', 'Upper North', 'Upper East', 'Upper South', 'Upper West', 'Hill Side', 'Pavilion Deck'],
+      gates: [
+        { label: 'Gate A — Main', a: 20 },
+        { label: 'Gate B — East', a: 110 },
+        { label: 'Gate C — South', a: 200 },
+        { label: 'Gate D — West', a: 290 },
+      ],
+      medical: [
+        { label: 'HPCA Medical (altitude)', a: 35 },
+        { label: 'First Aid — Pavilion', a: 205 },
+      ],
+      hot: [0, 8, 1],
+    },
+    guwahati: {
+      name: 'Barsapara Cricket Stadium',
+      city: 'Guwahati, Assam',
+      cap: 40000,
+      note: 'IPL · ACA',
+      zones: ['North Stand', 'East Stand', 'South Stand', 'West Stand', 'Upper Ring', 'Corporate East', 'Corporate West', 'North East', 'South West', 'Media'],
+      gates: [
+        { label: 'Gate 1 — North', a: 12 },
+        { label: 'Gate 2 — East', a: 102 },
+        { label: 'Gate 3 — South', a: 192 },
+        { label: 'Gate 4 — West', a: 282 },
+      ],
+      medical: [
+        { label: 'ACA Medical Room', a: 55 },
+        { label: 'Ambulance Bay', a: 195 },
+      ],
+      hot: [1, 4, 2],
+    },
+    jaipur: {
+      name: 'Sawai Mansingh Stadium',
+      city: 'Jaipur, Rajasthan',
+      cap: 30000,
+      note: 'IPL · RCA · RR home',
+      zones: ['North Pavilion', 'East Block', 'South Pavilion', 'West Block', 'Upper North', 'Upper East', 'Upper South', 'Upper West', 'Student Gallery', 'VIP'],
+      gates: [
+        { label: 'Gate 1 — North', a: 10 },
+        { label: 'Gate 2 — East', a: 100 },
+        { label: 'Gate 3 — South', a: 190 },
+        { label: 'Gate 4 — West', a: 280 },
+      ],
+      medical: [
+        { label: 'RCA Medical', a: 48 },
+        { label: 'First Aid — South', a: 198 },
+      ],
+      hot: [2, 5, 1],
+    },
+    mohali: {
+      name: 'Punjab Cricket Association IS Bindra Stadium',
+      city: 'Mohali, Punjab',
+      cap: 27000,
+      note: 'IPL · PCA',
+      zones: ['North Stand', 'East Stand', 'South Pavilion', 'West Stand', 'K Pavilion', 'Upper East', 'Upper West', 'Terrace', 'Media', 'VIP'],
+      gates: [
+        { label: 'Gate 1', a: 14 },
+        { label: 'Gate 2', a: 104 },
+        { label: 'Gate 3', a: 194 },
+        { label: 'Gate 4', a: 284 },
+      ],
+      medical: [
+        { label: 'PCA Medical Bay', a: 60 },
+        { label: 'St John — North', a: 8 },
+      ],
+      hot: [4, 1, 2],
+    },
+  };
+
+  function polar(r, deg) {
+    const rad = (deg * Math.PI) / 180;
+    return [CX + r * Math.sin(rad), CY - r * Math.cos(rad)];
+  }
+
+  function wedgePoints(r0, r1, a0, a1) {
+    const [x0i, y0i] = polar(r0, a0);
+    const [x0o, y0o] = polar(r1, a0);
+    const [x1o, y1o] = polar(r1, a1);
+    const [x1i, y1i] = polar(r0, a1);
+    return `${x0i},${y0i} ${x0o},${y0o} ${x1o},${y1o} ${x1i},${y1i}`;
+  }
+
+  function densityClass(v) {
+    if (v < 0.85) return 'd-low';
+    if (v < 1.65) return 'd-med';
+    return 'd-high';
+  }
+
+  function densityLabel(v) {
+    if (v < 0.85) return { t: 'Low', c: 'low' };
+    if (v < 1.65) return { t: 'Moderate', c: 'med' };
+    return { t: 'High', c: 'high' };
+  }
+
+  let zoneVals = [];
+  let zoneEls = [];
+  let currentKey = null;
+  let timer = null;
+
+  function buildPitch() {
+    layerPitch.innerHTML = '';
+    const el = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+    el.setAttribute('cx', String(CX));
+    el.setAttribute('cy', String(CY));
+    el.setAttribute('rx', '48');
+    el.setAttribute('ry', '34');
+    el.setAttribute('class', 'ssm-pitch');
+    layerPitch.appendChild(el);
+  }
+
+  function buildZones(st) {
+    layerZones.innerHTML = '';
+    zoneEls = [];
+    zoneVals = st.zones.map((_, i) => {
+      let base = Math.random() * 0.9 + 0.35;
+      if (st.hot.includes(i)) base += 0.45;
+      return Math.min(2, base);
+    });
+    for (let i = 0; i < 10; i++) {
+      const a0 = i * 36;
+      const a1 = (i + 1) * 36;
+      const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      poly.setAttribute('points', wedgePoints(R_IN, R_OUT, a0, a1));
+      poly.setAttribute('class', `ssm-zone ${densityClass(zoneVals[i])}`);
+      poly.setAttribute('data-zi', String(i));
+      const t = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+      t.textContent = st.zones[i];
+      poly.appendChild(t);
+      layerZones.appendChild(poly);
+      zoneEls.push(poly);
+    }
+  }
+
+  function buildGates(st) {
+    layerGates.innerHTML = '';
+    st.gates.forEach((g) => {
+      const [gx, gy] = polar(R_GATE, g.a);
+      const gr = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+      const s = 5;
+      gr.setAttribute('points', `${gx},${gy - s} ${gx + s},${gy} ${gx},${gy + s} ${gx - s},${gy}`);
+      gr.setAttribute('class', 'ssm-gate');
+      const t = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+      t.textContent = g.label;
+      gr.appendChild(t);
+      layerGates.appendChild(gr);
+      const [tx, ty] = polar(R_GATE + 22, g.a);
+      const lab = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      lab.setAttribute('x', String(tx));
+      lab.setAttribute('y', String(ty));
+      lab.setAttribute('text-anchor', 'middle');
+      lab.setAttribute('class', 'ssm-gate-label');
+      const short = g.label.split('—')[0].trim();
+      lab.textContent = short.length > 14 ? short.slice(0, 12) + '…' : short;
+      layerGates.appendChild(lab);
+    });
+  }
+
+  function buildMedical(st) {
+    layerMed.innerHTML = '';
+    st.medical.forEach((m) => {
+      const [mx, my] = polar(R_MED, m.a);
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', String(mx));
+      c.setAttribute('cy', String(my));
+      c.setAttribute('r', '10');
+      c.setAttribute('class', 'ssm-med-bg');
+      const t0 = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+      t0.textContent = m.label;
+      c.appendChild(t0);
+      layerMed.appendChild(c);
+      const cr = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      cr.setAttribute('d', `M${mx - 4},${my}h8M${mx},${my - 4}v8`);
+      cr.setAttribute('class', 'ssm-med-cross');
+      layerMed.appendChild(cr);
+      const [lx, ly] = polar(R_MED - 20, m.a);
+      const lab = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      lab.setAttribute('x', String(lx));
+      lab.setAttribute('y', String(ly));
+      lab.setAttribute('text-anchor', 'middle');
+      lab.setAttribute('class', 'ssm-med-label');
+      lab.textContent = 'Med';
+      layerMed.appendChild(lab);
+    });
+  }
+
+  function gateWaitMin(g, st) {
+    const seg = Math.floor(((g.a % 360) + 18) / 36) % 10;
+    const v = zoneVals[seg] ?? 1;
+    const base = 2 + v * 5 + Math.random() * 4;
+    return Math.round(base);
+  }
+
+  function renderLists(st) {
+    zoneList.innerHTML = '';
+    st.zones.forEach((name, i) => {
+      const li = document.createElement('li');
+      const L = densityLabel(zoneVals[i]);
+      li.innerHTML = `<span class="ssm-z-name">${name}</span><span class="ssm-z-val ${L.c}">${L.t}</span>`;
+      zoneList.appendChild(li);
+    });
+    gateList.innerHTML = '';
+    st.gates.forEach((g) => {
+      const w = gateWaitMin(g, st);
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="sss-z-name">${g.label}</span><span class="sss-gate-wait">~${w} min queue</span>`;
+      gateList.appendChild(li);
+    });
+    medList.innerHTML = '';
+    st.medical.forEach((m) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<span class="sss-z-name">${m.label}</span><span>Staffed</span>`;
+      medList.appendChild(li);
+    });
+    gateList.querySelectorAll('.sss-z-name').forEach((e) => e.classList.replace('sss-z-name', 'ssm-z-name'));
+    gateList.querySelectorAll('.sss-gate-wait').forEach((e) => e.classList.replace('sss-gate-wait', 'ssm-gate-wait'));
+    medList.querySelectorAll('.sss-z-name').forEach((e) => e.classList.replace('sss-z-name', 'sss-z-name'.replace('sss', 'ssm')));
+  }
+
+  function tick() {
+    const st = SSM_STADIUMS[currentKey];
+    if (!st) return;
+    zoneVals = zoneVals.map((v, i) => {
+      let nv = v + (Math.random() - 0.5) * 0.38;
+      if (st.hot.includes(i)) nv += 0.05;
+      return Math.max(0, Math.min(2, nv));
+    });
+    zoneEls.forEach((el, i) => {
+      el.setAttribute('class', `ssm-zone ${densityClass(zoneVals[i])}`);
+    });
+    renderLists(st);
+    if (tickEl) tickEl.textContent = '↻ ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+
+  function loadStadium(key) {
+    currentKey = key;
+    const st = SSM_STADIUMS[key];
+    if (!st) return;
+    titleEl.textContent = st.name;
+    metaEl.textContent = `${st.city} · ${st.note}`;
+    const occ = Math.round(st.cap * (0.58 + Math.random() * 0.32));
+    occEl.textContent = occ.toLocaleString('en-IN');
+    buildPitch();
+    buildZones(st);
+    buildGates(st);
+    buildMedical(st);
+    renderLists(st);
+    if (tickEl) tickEl.textContent = '↻ ' + new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  }
+
+  Object.entries(SSM_STADIUMS).forEach(([k, v]) => {
+    const o = document.createElement('option');
+    o.value = k;
+    o.textContent = `${v.name} — ${v.city.split(',')[0]}`;
+    sel.appendChild(o);
+  });
+
+  sel.addEventListener('change', () => {
+    if (timer) clearInterval(timer);
+    loadStadium(sel.value);
+    timer = setInterval(tick, 2800);
+  });
+
+  const firstKey = Object.keys(SSM_STADIUMS)[0];
+  sel.value = firstKey;
+  loadStadium(firstKey);
+  timer = setInterval(tick, 2800);
+})();
 
 // ── SECURITY SECTION TABS ─────────────────
 const tabs = document.querySelectorAll('.sec-tab');
