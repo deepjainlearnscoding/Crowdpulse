@@ -3,12 +3,14 @@
 //  Simple Express API — no database required
 // ═══════════════════════════════════════════════════
 
+const path    = require('path');
 const express = require('express');
 const cors    = require('cors');
 const { v4: uuidv4 } = require('uuid');
 
 const app  = express();
 const PORT = process.env.PORT || 3001;
+const ROOT = path.join(__dirname, '..');
 
 // ── Middleware ────────────────────────────────────
 app.use(cors());
@@ -77,8 +79,8 @@ const VALID_STATUSES  = ['pending', 'responding', 'on_scene', 'resolved', 'dismi
 //  ROUTES
 // ═══════════════════════════════════════════════════
 
-// ── Health check ─────────────────────────────────
-app.get('/', (req, res) => {
+// ── API catalog (JSON) ──────────────────────────
+app.get('/api/info', (req, res) => {
   res.json({
     service: 'StadiumIQ Incident API',
     version: '1.0.0',
@@ -321,18 +323,22 @@ app.get('/api/summary', (req, res) => {
   });
 });
 
+// ── Static site (landing + demo UI) ───────────────
+app.use(express.static(ROOT));
+
 // ─────────────────────────────────────────────────
-//  404 catch-all
+//  404 catch-all (API-only — static already handled)
 // ─────────────────────────────────────────────────
 app.use((req, res) => {
   res.status(404).json({ success: false, message: `Route ${req.method} ${req.path} not found.` });
 });
 
 // ── Start Server ──────────────────────────────────
-app.listen(PORT, () => {
+const HOST = process.env.HOST || '0.0.0.0';
+app.listen(PORT, HOST, () => {
   console.log('');
-  console.log('  ⚡ StadiumIQ Backend running');
+  console.log('  ⚡ StadiumIQ running (web + API)');
   console.log(`  🌐 http://localhost:${PORT}`);
-  console.log(`  📋 API docs: http://localhost:${PORT}/`);
+  console.log(`  📋 API catalog: http://localhost:${PORT}/api/info`);
   console.log('');
 });

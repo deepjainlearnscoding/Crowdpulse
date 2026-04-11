@@ -107,7 +107,18 @@ setInterval(() => {
 }, 2800);
 
 // ── INCIDENT REPORTING — Fetch API ───────────────
-const API = 'http://localhost:3001';
+// Meta override: <meta name="stadiumiq-api-base" content="https://your-api.example.com" />
+// Empty / omitted: same-origin when the page is served by this app, else localhost:3001 for dev.
+function stadiumiqApiBase() {
+  const meta = document.querySelector('meta[name="stadiumiq-api-base"]');
+  if (meta?.content?.trim()) return meta.content.trim().replace(/\/$/, '');
+  if (location.protocol === 'file:') return 'http://localhost:3001';
+  const p = location.port;
+  const sameAsServer = !p || p === '3001' || p === '443' || p === '80';
+  if (sameAsServer) return '';
+  return 'http://localhost:3001';
+}
+const API = stadiumiqApiBase();
 
 // Map each .sopt button's text → backend type value
 const TYPE_MAP = {

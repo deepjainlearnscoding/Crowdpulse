@@ -11,15 +11,15 @@ npm run dev      # development (auto-restart)
 npm start        # production
 ```
 
-Server runs on **http://localhost:3001**
+Server runs on **http://localhost:3001** and also serves the StadiumIQ web UI from the same address.
 
 ---
 
 ## API Endpoints
 
-### Root — API reference
+### API catalog (JSON)
 ```
-GET /
+GET /api/info
 ```
 
 ---
