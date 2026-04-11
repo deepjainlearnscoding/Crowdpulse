@@ -9,8 +9,26 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:var(--font);background:linear-gradient(rgba(0,0,0,0.45),rgba(0,0,0,0.45)),linear-gradient(-45deg,#0a0f24,#2c144b,#0d3861,#084b6f);background-size:100% 100%,400% 400%;animation:gradBG 15s ease infinite;color:var(--t1);overflow-x:hidden;line-height:1.6}
-@keyframes gradBG{0%{background-position:0% 0%,0% 50%}50%{background-position:0% 0%,100% 50%}100%{background-position:0% 0%,0% 50%}}
+body{
+  font-family:var(--font);color:var(--t1);overflow-x:hidden;line-height:1.6;
+  background:
+    radial-gradient(circle at 80% 70%, rgba(0,200,255,0.25), transparent 40%),
+    radial-gradient(circle at 70% 80%, rgba(180,0,255,0.2), transparent 50%),
+    radial-gradient(circle at 30% 60%, rgba(255,100,50,0.05), transparent 50%),
+    linear-gradient(135deg, #05070d, #0a0f2c, #101935);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 300% 300%;
+  background-attachment: fixed;
+  animation: glowShift 16s ease infinite;
+}
+body::after {
+  content: ''; position: fixed; inset: 0; 
+  box-shadow: inset 0 0 150px rgba(0,0,0,0.85); pointer-events: none; z-index: 9999;
+}
+@keyframes glowShift {
+  0% { background-position: 0% 0%, 0% 0%, 0% 0%, 0% 50%; }
+  50% { background-position: 0% 0%, 0% 0%, 0% 0%, 100% 50%; }
+  100% { background-position: 0% 0%, 0% 0%, 0% 0%, 0% 50%; }
+}
 a{color:inherit;text-decoration:none}
 ul{list-style:none}
 .container{max-width:1200px;margin:0 auto;padding:0 24px}
@@ -593,8 +611,10 @@ ul{list-style:none}
 .sp-layout, .fcard, .ssm-map-card, .ssm-panel, .ac, .med-col, 
 .spv-phone, .spv-status, .spv-qr, .spv-anon, #navbar, 
 .auth-form-panel, .card, .widget {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255,255,255,0.04) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
 }
-#navbar { background: rgba(5,8,16,0.5); }
-#navbar.scrolled { background: rgba(5,8,16,0.8); }
+#navbar { background: rgba(5,7,13,0.4) !important; border-bottom: 1px solid rgba(255,255,255,0.08) !important; }
+#navbar.scrolled { background: rgba(5,7,13,0.7) !important; }
