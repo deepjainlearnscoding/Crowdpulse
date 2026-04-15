@@ -4,40 +4,38 @@
 
 // ── HERO CANVAS ──────────────────────────
 const canvas = document.getElementById('heroCanvas');
-if (canvas) {
-  const ctx = canvas.getContext('2d');
-  function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
-  resize(); window.addEventListener('resize', resize);
+const ctx = canvas.getContext('2d');
+function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+resize(); window.addEventListener('resize', resize);
 
-  const PCOLS = ['rgba(79,142,247,','rgba(168,85,247,','rgba(34,211,238,','rgba(34,197,94,'];
-  const pts = [];
-  class P {
-    constructor() { this.reset(true); }
-    reset(init) {
-      this.x = Math.random() * canvas.width;
-      this.y = init ? Math.random() * canvas.height : canvas.height + 10;
-      this.vx = (Math.random() - .5) * .5; this.vy = -(Math.random() * .9 + .3);
-      this.r = Math.random() * 1.8 + .4; this.a = Math.random() * .5 + .1;
-      this.col = PCOLS[~~(Math.random() * PCOLS.length)];
-      this.life = 0; this.max = Math.random() * 260 + 180;
-    }
-    tick() { this.x += this.vx; this.y += this.vy; this.life++; this.vx += Math.sin(this.life*.02)*.008; if (this.life > this.max || this.y < -10) this.reset(); }
-    draw() {
-      const f = this.life < 40 ? this.life/40 : this.life > this.max-40 ? (this.max-this.life)/40 : 1;
-      ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
-      ctx.fillStyle = this.col + this.a*f + ')'; ctx.fill();
-    }
+const PCOLS = ['rgba(79,142,247,','rgba(168,85,247,','rgba(34,211,238,','rgba(34,197,94,'];
+const pts = [];
+class P {
+  constructor() { this.reset(true); }
+  reset(init) {
+    this.x = Math.random() * canvas.width;
+    this.y = init ? Math.random() * canvas.height : canvas.height + 10;
+    this.vx = (Math.random() - .5) * .5; this.vy = -(Math.random() * .9 + .3);
+    this.r = Math.random() * 1.8 + .4; this.a = Math.random() * .5 + .1;
+    this.col = PCOLS[~~(Math.random() * PCOLS.length)];
+    this.life = 0; this.max = Math.random() * 260 + 180;
   }
-  for (let i = 0; i < 110; i++) pts.push(new P());
-  function links() {
-    for (let i = 0; i < pts.length; i++) for (let j = i+1; j < pts.length; j++) {
-      const dx = pts[i].x-pts[j].x, dy = pts[i].y-pts[j].y, d = Math.sqrt(dx*dx+dy*dy);
-      if (d < 85) { ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.strokeStyle = `rgba(79,142,247,${(1-d/85)*.06})`; ctx.lineWidth=.5; ctx.stroke(); }
-    }
+  tick() { this.x += this.vx; this.y += this.vy; this.life++; this.vx += Math.sin(this.life*.02)*.008; if (this.life > this.max || this.y < -10) this.reset(); }
+  draw() {
+    const f = this.life < 40 ? this.life/40 : this.life > this.max-40 ? (this.max-this.life)/40 : 1;
+    ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+    ctx.fillStyle = this.col + this.a*f + ')'; ctx.fill();
   }
-  function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); links(); pts.forEach(p=>{p.tick();p.draw();}); requestAnimationFrame(anim); }
-  anim();
 }
+for (let i = 0; i < 110; i++) pts.push(new P());
+function links() {
+  for (let i = 0; i < pts.length; i++) for (let j = i+1; j < pts.length; j++) {
+    const dx = pts[i].x-pts[j].x, dy = pts[i].y-pts[j].y, d = Math.sqrt(dx*dx+dy*dy);
+    if (d < 85) { ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.strokeStyle = `rgba(79,142,247,${(1-d/85)*.06})`; ctx.lineWidth=.5; ctx.stroke(); }
+  }
+}
+function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); links(); pts.forEach(p=>{p.tick();p.draw();}); requestAnimationFrame(anim); }
+anim();
 
 // ── MINI HEATMAP (hero widget) ────────────
 const hmGrid = document.getElementById('heroHeatmap');
@@ -55,16 +53,12 @@ if (hmGrid) {
 
 // ── NAVBAR ────────────────────────────────
 const nav = document.getElementById('navbar');
-if (nav) {
-  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 50));
-  const ham = document.getElementById('hamburger');
-  if (ham) {
-    ham.addEventListener('click', () => nav.classList.toggle('menu-open'));
-    document.addEventListener('click', e => { if (!nav.contains(e.target)) nav.classList.remove('menu-open'); });
-    document.querySelectorAll('.nav-links a').forEach(l => l.addEventListener('click', () => nav.classList.remove('menu-open')));
-    document.addEventListener('keydown', e => { if (e.key==='Escape') nav.classList.remove('menu-open'); });
-  }
-}
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 50));
+const ham = document.getElementById('hamburger');
+ham.addEventListener('click', () => nav.classList.toggle('menu-open'));
+document.addEventListener('click', e => { if (!nav.contains(e.target)) nav.classList.remove('menu-open'); });
+document.querySelectorAll('.nav-links a').forEach(l => l.addEventListener('click', () => nav.classList.remove('menu-open')));
+document.addEventListener('keydown', e => { if (e.key==='Escape') nav.classList.remove('menu-open'); });
 
 // ── SCROLL REVEAL ─────────────────────────
 const reveals = document.querySelectorAll('.fcard,.mct,.pc,.hlc,.arch-step,.phone-wrap,.ssm-animate');
@@ -81,12 +75,10 @@ reveals.forEach(el => obs.observe(el));
 
 // ── PARALLAX ──────────────────────────────
 const hc = document.querySelector('.hero-content');
-if (hc) {
-  window.addEventListener('scroll', () => {
-    const s = scrollY;
-    if (s < innerHeight) { hc.style.transform = `translateY(${s*.1}px)`; hc.style.opacity = 1-s/(innerHeight*.75); }
-  });
-}
+window.addEventListener('scroll', () => {
+  const s = scrollY;
+  if (s < innerHeight && hc) { hc.style.transform = `translateY(${s*.1}px)`; hc.style.opacity = 1-s/(innerHeight*.75); }
+});
 
 // ── LIVE WAIT TIMES SIMULATION ────────────
 const WR_DATA = [
@@ -835,31 +827,3 @@ tabs.forEach(tab => {
     }
   });
 });
-
-// -- HEATMAP BACKGROUND COLOR CYCLING -------------
-(function initHeatmapBg() {
-  const blobs = document.querySelectorAll('.hm-bg-blob');
-  if (!blobs.length) return;
-  
-  // Base heatmap colors with variable alpha
-  const colors = [
-    { r: 239, g: 68, b: 68 },   // Red
-    { r: 245, g: 158, b: 11 },  // Yellow
-    { r: 34, g: 197, b: 94 },   // Green
-    { r: 79, g: 142, b: 247 },  // Blue
-    { r: 168, g: 85, b: 247 }   // Purple
-  ];
-  
-  setInterval(() => {
-    blobs.forEach(blob => {
-      // 30% chance to change color per interval
-      if (Math.random() > 0.3) return;
-      
-      const c = colors[Math.floor(Math.random() * colors.length)];
-      // Randomize opacity between 0.15 and 0.45
-      const a = (Math.random() * 0.3 + 0.15).toFixed(2);
-      
-      blob.style.background = "radial-gradient(circle, rgba($($c.r),$($c.g),$($c.b),$a) 0%, transparent 70%)";
-    });
-  }, 4000);
-})();
