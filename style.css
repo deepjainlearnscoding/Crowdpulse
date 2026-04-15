@@ -9,37 +9,14 @@
   --font:'Outfit',sans-serif;--mono:'JetBrains Mono',monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;background:#05070d;min-height:100%}
-body{font-family:var(--font);background:transparent;color:var(--t1);overflow-x:hidden;line-height:1.6;position:relative}
+html{scroll-behavior:smooth;background:#010314;min-height:100%}
+body{font-family:var(--font);background-color:#010314;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='none' stroke='white' stroke-opacity='0.15' stroke-width='4' d='M0,192L80,181.3C160,171,320,149,480,160C640,171,800,213,960,213.3C1120,213,1280,171,1360,149.3L1440,128' /%3E%3Cpath fill='none' stroke='white' stroke-opacity='0.08' stroke-width='2' d='M0,160L80,176C160,192,320,224,480,218.7C640,213,800,171,960,154.7C1120,139,1280,149,1360,154.7L1440,160' /%3E%3C/svg%3E"),radial-gradient(circle at 90% 0%,rgba(0,210,255,0.45) 0%,rgba(58,123,213,0.15) 35%,transparent 60%),radial-gradient(circle at 90% 100%,rgba(255,59,124,0.4) 0%,rgba(255,154,68,0.2) 40%,transparent 65%),radial-gradient(circle at 100% 50%,rgba(168,85,247,0.15) 0%,transparent 50%);background-attachment:fixed;background-position:center center;background-repeat:no-repeat;background-size:cover;color:var(--t1);overflow-x:hidden;line-height:1.6;position:relative}/* ── ambient classes removed as background is now global on body ── */
 
-/* ── Premium ambient: dark base + soft animated glows + vignette ── */
-.ambient-bg{position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden}
-.ambient-base{position:absolute;inset:0;background:linear-gradient(145deg,#05070d 0%,#070b18 38%,#0c1430 72%,#0a0e1c 100%)}
-.ambient-glow{position:absolute;border-radius:50%;filter:blur(72px);will-change:transform,opacity;mix-blend-mode:screen;opacity:.52}
-.ambient-glow--blue{width:min(78vw,980px);height:min(78vw,980px);background:radial-gradient(circle at 40% 40%,rgba(59,130,246,.55) 0%,rgba(59,130,246,.12) 45%,transparent 68%);right:-14%;bottom:-12%;animation:ambientDriftA 16s ease-in-out infinite alternate}
-.ambient-glow--cyan{width:min(55vw,640px);height:min(55vw,640px);background:radial-gradient(circle at 50% 50%,rgba(0,200,255,.42) 0%,rgba(34,211,238,.1) 50%,transparent 70%);right:8%;bottom:18%;animation:ambientDriftB 14s ease-in-out infinite alternate}
-.ambient-glow--purple{width:min(62vw,760px);height:min(62vw,760px);background:radial-gradient(circle at 45% 55%,rgba(139,92,246,.45) 0%,rgba(168,85,247,.12) 48%,transparent 72%);right:22%;bottom:-8%;animation:ambientDriftC 18s ease-in-out infinite alternate}
-.ambient-glow--warm{width:min(48vw,520px);height:min(48vw,520px);background:radial-gradient(circle at 50% 50%,rgba(251,113,133,.22) 0%,rgba(249,115,22,.12) 42%,transparent 68%);right:-6%;bottom:32%;animation:ambientDriftD 15s ease-in-out infinite alternate}
-.ambient-mesh{position:absolute;inset:0;opacity:.14;background-image:
-  linear-gradient(180deg,transparent 55%,rgba(79,142,247,.07) 100%),
-  repeating-linear-gradient(105deg,rgba(255,255,255,.02) 0 1px,transparent 1px 48px),
-  radial-gradient(ellipse 120% 80% at 80% 90%,rgba(168,85,247,.06),transparent 55%);
-  animation:ambientMesh 20s ease-in-out infinite alternate}
-.ambient-vignette{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 90% 85% at 50% 42%,transparent 35%,rgba(0,0,0,.38) 72%,rgba(0,0,0,.72) 100%)}
-@keyframes ambientDriftA{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-2.5%,-3%) scale(1.05)}}
-@keyframes ambientDriftB{0%{transform:translate(0,0) scale(1);opacity:.48}100%{transform:translate(-4%,2%) scale(1.08);opacity:.58}}
-@keyframes ambientDriftC{0%{transform:translate(0,0) scale(1)}100%{transform:translate(3%,-2.5%) scale(1.06)}}
-@keyframes ambientDriftD{0%{transform:translate(0,0) scale(1);opacity:.4}100%{transform:translate(-2%,4%) scale(1.04);opacity:.52}}
-@keyframes ambientMesh{0%{opacity:.11;transform:translateY(0)}100%{opacity:.18;transform:translateY(-0.8%)}}
-@media (prefers-reduced-motion:reduce){
-  .ambient-glow,.ambient-mesh{animation:none!important}
-  .ambient-glow{opacity:.42}
-}
 a{color:inherit;text-decoration:none}
 ul{list-style:none}
 .container{max-width:1200px;margin:0 auto;padding:0 24px}
 .section{padding:100px 0;position:relative}
-.section-dark{background:rgba(5,7,13,.52);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.04)}
+.section-dark{background:transparent;border-top:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.04)}
 .gtext{background:linear-gradient(135deg,var(--a),var(--a2),var(--a3));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;background-size:200%;animation:gs 4s ease infinite}
 @keyframes gs{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
 .sec-hd{text-align:center;margin-bottom:64px}
