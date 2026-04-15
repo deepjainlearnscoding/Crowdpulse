@@ -36,6 +36,43 @@
     .hlt strong { color: white; font-size: .875rem; display: block; }
     .hlt span { color: rgba(255,255,255,.45); font-size: .78rem; }
     @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+
+    /* DASHBOARD OVERHAUL CSS */
+    .hmd-wrapper { padding: 4rem 2rem; background: transparent; }
+    .hmd-container { display: grid; grid-template-columns: 360px 1fr; gap: 24px; min-height: 75vh; width: 100%; max-width: 1600px; margin: 0 auto; }
+    
+    .hmd-sidebar { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); border-radius: var(--rlg); padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    .hmd-status { background: rgba(0,0,0,.2); border-radius: var(--rmd); padding: 1rem; border: 1px solid rgba(255,255,255,.05); }
+    .hmd-status-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .hmd-status-dot { width: 10px; height: 10px; border-radius: 50%; background: #22c55e; transition: background .3s; }
+    .hmd-status-head strong { color: white; font-size: .95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+    @keyframes pd { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .hm-legend { display: flex; gap: 1rem; align-items: center; }
+    .hml-item { display: flex; align-items: center; gap: 6px; font-size: .8rem; color: var(--t2); font-weight: 600; text-transform: uppercase; }
+    .hml-item span { width: 12px; height: 12px; border-radius: 3px; }
+    
+    .hmd-insights h4 { font-size: 1.1rem; color: white; font-weight: 800; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+    .inc-card { background: rgba(255,255,255,.04); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,.05); }
+    .inc-card span { display: block; font-size: .75rem; color: var(--t2); text-transform: uppercase; font-weight: 700; letter-spacing: .05em; margin-bottom: 4px; }
+    .inc-card strong { display: block; font-size: 1rem; color: white; font-weight: 700; }
+    .inc-card strong.red { color: #fca5a5; }
+    .inc-card strong.green { color: #86efac; }
+    .inc-card.alert { background: rgba(239, 68, 68, .1); border-color: rgba(239,68,68,.3); }
+    .inc-card.alert strong { color: #fca5a5; }
+
+    .hmd-actions { display: flex; flex-direction: column; gap: 12px; margin-top: auto; }
+    .hmd-btn { padding: 14px; border-radius: var(--rmd); font-family: var(--font); font-weight: 700; font-size: .95rem; cursor: pointer; transition: all .2s; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.15); color: white; outline: none; }
+    .hmd-btn:hover { background: rgba(255,255,255,.1); }
+    .hmd-btn.primary { background: linear-gradient(135deg, #3b82f6, #6366f1); border: none; }
+    .hmd-btn.primary:hover { box-shadow: 0 4px 20px rgba(99,102,241,.4); transform: translateY(-2px); }
+
+    .hmd-map-pane { background: rgba(5,8,23,.5); border: 1px solid rgba(255,255,255,.08); border-radius: var(--rlg); overflow: hidden; position: relative; }
+    #map-canvas { width: 100%; height: 100%; min-height: 500px; }
+    .hmd-tooltip { position: absolute; background: rgba(13,21,38,.9); border: 1px solid rgba(255,255,255,.15); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 8px; padding: 12px 16px; color: white; font-size: .85rem; font-family: var(--font); pointer-events: none; opacity: 0; transition: opacity .2s; z-index: 100; box-shadow: 0 8px 32px rgba(0,0,0,.5); }
+    
+    @media (max-width: 1024px) {
+      .hmd-container { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -77,81 +114,58 @@
     </div>
   </section>
 
-  <!-- FEATURE SECTION -->
-  <section id="heatmap" class="section section-dark">
-    <div class="container">
-      <div class="fcard fc-special span2" style="max-width:900px;margin:0 auto">
-        <div class="fc-glow purple"></div>
-        <div class="fc-top"><span class="fcn">04</span><span class="fci">🌡️</span></div>
-        <h3>Live Crowd Heatmaps <span class="imp-tag">Most Important</span></h3>
-        <p>Real-time color-coded density overlay on the stadium map — updated every 5 seconds from sensors and CCTV. Fans avoid crowds, admins control flow.</p>
-        <div class="heatmap-demo">
-          <div class="hm-stadium">
-            <div class="hm-field"></div>
-            <div class="hm-zone hz-red"  style="top:4%;left:4%;width:28%;height:22%"><span>N · High</span></div>
-            <div class="hm-zone hz-yellow" style="top:4%;right:4%;width:28%;height:22%"><span>NE · Med</span></div>
-            <div class="hm-zone hz-green" style="top:32%;left:4%;width:22%;height:30%"><span>W · Free</span></div>
-            <div class="hm-zone hz-red"  style="top:32%;right:4%;width:22%;height:30%"><span>E · High</span></div>
-            <div class="hm-zone hz-green" style="bottom:4%;left:18%;width:28%;height:20%"><span>S · Free</span></div>
-            <div class="hm-zone hz-yellow" style="bottom:4%;right:18%;width:22%;height:20%"><span>SE · Med</span></div>
-          </div>
-          <div class="hm-legend-block">
-            <div class="hlb"><span class="hlb-dot red"></span><strong>Red</strong><span>Overcrowded — avoid</span></div>
-            <div class="hlb"><span class="hlb-dot yellow"></span><strong>Yellow</strong><span>Moderate — proceed with care</span></div>
-            <div class="hlb"><span class="hlb-dot green"></span><strong>Green</strong><span>Free — best experience</span></div>
-            <div class="hm-uses">
-              <div class="hmu"><div class="hmu-icon">👤</div><div><strong>Fans</strong><p>Avoid crowds, find free zones</p></div></div>
-              <div class="hmu"><div class="hmu-icon">🛡️</div><div><strong>Admins</strong><p>Control crowd flow, prevent surge</p></div></div>
-            </div>
-          </div>
+  <!-- DASHBOARD OVERHAUL -->
+  <section class="hmd-wrapper">
+    <div class="hmd-container">
+      
+      <!-- SIDEBAR -->
+      <aside class="hmd-sidebar" aria-label="Heatmap Insights">
+        <div class="sec-hd" style="margin-bottom:0">
+          <span class="stag">Live Telemetry</span>
+          <h2 style="font-size:1.8rem;line-height:1.2;margin:.5rem 0 .75rem">Crowd Intelligence <span class="gtext" style="--a:#10b981;--a2:#22c55e;--a3:#4ade80">Dashboard</span></h2>
+          <p style="font-size:.85rem;line-height:1.5;color:rgba(255,255,255,.6)">Simulating live sensor data from Firebase.</p>
         </div>
-        <div class="tech-row">
-          <span class="tc">IoT Sensors</span><span class="tc">CCTV AI</span><span class="tc">WebSockets</span><span class="tc">Canvas Render</span>
+        
+        <div class="hmd-status">
+           <div class="hmd-status-head">
+              <span class="hmd-status-dot" id="hm-status-dot" style="animation: pd 2s ease infinite"></span>
+              <strong id="hm-status-text">Live</strong>
+           </div>
+           <div class="hm-legend" aria-label="Heatmap Legend">
+              <div class="hml-item"><span style="background:#22c55e"></span> Low</div>
+              <div class="hml-item"><span style="background:#f59e0b"></span> Medium</div>
+              <div class="hml-item"><span style="background:#ef4444"></span> High</div>
+           </div>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- LIVE TICKER & USE CASES -->
-  <section class="hm-full-demo">
-    <div class="container">
-      <div class="sec-hd">
-        <span class="stag">Live Data Feed</span>
-        <h2>Crowd Intelligence <span class="gtext">in Motion</span></h2>
-        <p>Simulated live zone status — in production, this updates from turnstiles, CCTV, and BLE sensors every 5 seconds.</p>
-      </div>
+        <div class="hmd-insights">
+           <h4>🧠 AI Insights</h4>
+           <div class="inc-card">
+              <span>Most Crowded Zone</span>
+              <strong id="sb-crowded-val" class="red">Gate 3 (270 fans)</strong>
+           </div>
+           <div class="inc-card">
+              <span>Safest Entry Gate</span>
+              <strong id="sb-safe-val" class="green">Gate 8 (90 fans)</strong>
+           </div>
+           <div class="inc-card alert">
+              <span>⚠️ Prediction</span>
+              <strong>Congestion in 5 mins at Gate 3!</strong>
+           </div>
+        </div>
+        
+        <div class="hmd-actions">
+           <button class="hmd-btn" id="btn-evac">View evacuation routes</button>
+           <button class="hmd-btn primary" id="btn-path">Find least crowded path</button>
+        </div>
+      </aside>
 
-      <div class="hm-live-ticker" id="hmTicker">
-        <div class="hlt"><div class="hlt-dot red"></div><div><strong>North Stand — HIGH</strong><span>Density 94% · Avoid</span></div></div>
-        <div class="hlt"><div class="hlt-dot yellow"></div><div><strong>East Corridor — MOD</strong><span>Density 61% · Caution</span></div></div>
-        <div class="hlt"><div class="hlt-dot green"></div><div><strong>West Stand — LOW</strong><span>Density 22% · Free</span></div></div>
-        <div class="hlt"><div class="hlt-dot red"></div><div><strong>Gate A Queue — HIGH</strong><span>~12 min wait</span></div></div>
-        <div class="hlt"><div class="hlt-dot green"></div><div><strong>Gate C — CLEAR</strong><span>~2 min wait</span></div></div>
-        <div class="hlt"><div class="hlt-dot yellow"></div><div><strong>Food Court B — MOD</strong><span>Density 55%</span></div></div>
-      </div>
+      <!-- MAP PANE -->
+      <main class="hmd-map-pane" aria-label="Interactive Map">
+        <div id="map-canvas"></div>
+        <div id="hm-tooltip" class="hmd-tooltip"></div>
+      </main>
 
-      <div class="hm-use-cards">
-        <div class="hmu-card">
-          <div class="hmu-card-icon">👤</div>
-          <h4>For Fans</h4>
-          <p>See where the crowd is before you move. Find less-congested food stalls, washrooms, and corridors in seconds — enjoy the game, skip the chaos.</p>
-        </div>
-        <div class="hmu-card">
-          <div class="hmu-card-icon">🛡️</div>
-          <h4>For Security</h4>
-          <p>Monitor crowd pressure in every zone from a central dashboard. Pre-position staff before surges form. React instantly when density crosses thresholds.</p>
-        </div>
-        <div class="hmu-card">
-          <div class="hmu-card-icon">🏟️</div>
-          <h4>For Operations</h4>
-          <p>Control gate open/close decisions based on real-time flow data. Re-route fan streams to balance capacity across sections and reduce bottlenecks.</p>
-        </div>
-        <div class="hmu-card">
-          <div class="hmu-card-icon">🚨</div>
-          <h4>For Emergencies</h4>
-          <p>During evacuation, the heatmap becomes a live traffic control system — showing which exits are clear and routing fans away from surge zones.</p>
-        </div>
-      </div>
     </div>
   </section>
 
@@ -173,5 +187,12 @@
   </footer>
 
   <script src="script.js"></script>
+  <!-- INTEGRATED JS MODULAR STRUCTURE -->
+  <script src="js/firebase.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/heatmap.js"></script>
+  <!-- Google Maps API with Visualization Library -->
+  <!-- ADD YOUR API KEY HERE -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&libraries=visualization&callback=initGoogleMapAPI" async defer></script>
 </body>
 </html>
