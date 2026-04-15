@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lost & Found — StadiumIQ</title>
+  <meta name="description" content="Report a lost item or browse found items with StadiumIQ." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .fph { padding: 8rem 0 3.5rem; background: transparent; text-align: center; position: relative; overflow: hidden; }
+    .fph::before { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 700px; height: 350px; background: radial-gradient(ellipse, rgba(234,179,8,0.1) 0%, transparent 70%); pointer-events: none; }
+    .fph-badge { display:inline-flex;align-items:center;gap:.5rem;background:rgba(234,179,8,.12);border:1px solid rgba(234,179,8,.3);border-radius:999px;padding:.35rem 1rem;color:rgba(250,204,21,.9);font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1.25rem; }
+    .fph-icon { font-size:3.5rem;margin-bottom:.75rem;display:block;line-height:1; }
+    .fph-title { font-size:clamp(2.2rem,5vw,3.75rem);font-weight:900;color:white;line-height:1.1;margin-bottom:.75rem; }
+    .fph-desc { color:rgba(255,255,255,.6);font-size:1.05rem;max-width:580px;margin:0 auto 1.75rem;line-height:1.65; }
+    .fph-chips { display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem; }
+    .back-home { display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:999px;color:rgba(255,255,255,.6);text-decoration:none;font-size:.82rem;font-weight:500;transition:all .2s;margin-bottom:2.5rem; }
+    .back-home:hover { background:rgba(255,255,255,.1);color:white; }
+
+    /* LAYOUT */
+    .lf-section { padding: 5rem 0; background: transparent; }
+    .lf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+    
+    /* FORM */
+    .lf-card { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); border-radius: var(--rlg); padding: 36px; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+    .lf-card h3 { font-size: 1.4rem; font-weight: 800; color: white; margin-bottom: 1.5rem; }
+    .lf-form { display: flex; flex-direction: column; gap: 1rem; }
+    .lf-group { display: flex; flex-direction: column; gap: 6px; }
+    .lf-group label { font-size: .8rem; font-weight: 700; color: var(--t2); text-transform: uppercase; letter-spacing: .05em; }
+    .lf-group input, .lf-group select, .lf-group textarea { width: 100%; padding: 12px 14px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.15); border-radius: var(--rsm); color: white; font-family: var(--font); font-size: .9rem; outline: none; transition: border-color .2s; }
+    .lf-group input:focus, .lf-group select:focus, .lf-group textarea:focus { border-color: rgba(234,179,8,.5); }
+    .lf-group textarea { resize: vertical; min-height: 80px; margin-bottom: 8px; }
+    
+    .lf-dropzone { border: 2px dashed rgba(255,255,255,.2); border-radius: var(--rmd); padding: 2rem; text-align: center; cursor: pointer; transition: all .2s; background: rgba(255,255,255,.02); }
+    .lf-dropzone:hover { border-color: rgba(234,179,8,.4); background: rgba(234,179,8,.05); display: flex; flex-direction: column; justify-content: center; }
+    .lf-dropzone-icon { font-size: 2rem; margin-bottom: 10px; }
+    .lf-dropzone span { color: var(--t2); font-size: .85rem; }
+    
+    .lf-submit { padding: 14px; background: linear-gradient(135deg, #ca8a04, #eab308); border: none; border-radius: var(--rmd); color: white; font-weight: 800; font-family: var(--font); font-size: 1rem; cursor: pointer; transition: all .2s; margin-top: .5rem; }
+    .lf-submit:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(234,179,8,.4); }
+
+    /* BOARD */
+    .lf-board { display: flex; flex-direction: column; gap: 1rem; }
+    .lf-item { display: flex; gap: 14px; padding: 16px; background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08); border-radius: var(--rmd); transition: all .2s; align-items: stretch; }
+    .lf-item:hover { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.15); transform: translateY(-2px); }
+    .lf-item-img { width: 80px; height: 80px; background: rgba(0,0,0,.3); border-radius: var(--rsm); display: flex; align-items: center; justify-content: center; font-size: 2rem; flex-shrink: 0; }
+    .lf-item-info { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+    .lf-item-info h4 { font-size: .95rem; font-weight: 700; color: white; margin-bottom: 2px; }
+    .lf-item-info p { font-size: .8rem; color: var(--t2); margin-bottom: 6px; }
+    .lf-item-badge { display: inline-block; padding: 2px 8px; background: rgba(34,197,94,.15); border: 1px solid rgba(34,197,94,.3); border-radius: 50px; font-size: .65rem; font-weight: 700; color: var(--green); width: fit-content; text-transform: uppercase; }
+
+    @media (max-width: 768px) {
+      .lf-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-logo">
+      <a href="home.html" style="text-decoration:none;display:flex;align-items:center;gap:.45rem;color:inherit">
+        <span class="logo-icon">⚡</span><span class="logo-text">StadiumIQ</span>
+      </a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="navigation.html">Navigation</a></li>
+      <li><a href="heatmap.html">Heatmap</a></li>
+      <li><a href="food.html">Food</a></li>
+      <li><a href="emergency.html">Emergency</a></li>
+      <li><a href="security.html">Security</a></li>
+      <li><a href="medical.html">Medical</a></li>
+      <li><a href="safety-map.html">Safety Map</a></li>
+      <li><a href="lost-found.html" style="color:#eab308">Lost&Found</a></li>
+    </ul>
+    <a href="auth.html" class="nav-cta">Sign In</a>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="fph">
+    <div class="container">
+      <a href="home.html" class="back-home">← Back to Home</a>
+      <div class="fph-badge">🔍 Lost & Found</div>
+      <span class="fph-icon">🎒</span>
+      <h1 class="fph-title">Lost It? <span class="gtext" style="--a:#ca8a04;--a2:#eab308;--a3:#fef08a">Found It.</span></h1>
+      <p class="fph-desc">Quickly register lost items with image uploads and exact location descriptions, or check out our digital Found Items board to retrieve your belongings.</p>
+      <div class="fph-chips">
+        <span class="chip">📸 Image Uploads</span>
+        <span class="chip">📍 Location Tagging</span>
+        <span class="chip">🛡️ Secure Claims</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORM & BOARD -->
+  <section class="lf-section section-dark">
+    <div class="container">
+      <div class="lf-grid">
+        
+        <!-- Report Lost Item Form -->
+        <div class="lf-card">
+          <h3>Report Lost Item</h3>
+          <form class="lf-form" onsubmit="event.preventDefault(); alert('Item registered successfully!');">
+            <div class="lf-group">
+              <label>Item Name</label>
+              <input type="text" placeholder="e.g., Black Leather Wallet" required />
+            </div>
+            <div class="lf-group">
+              <label>Category</label>
+              <select required>
+                <option value="">Select Category</option>
+                <option value="wallet">Wallet / ID</option>
+                <option value="keys">Keys</option>
+                <option value="phone">Electronics</option>
+                <option value="bag">Bag / Backpack</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="lf-group">
+              <label>Last Known Location</label>
+              <input type="text" placeholder="e.g., Zone C, Near Gate 5" required />
+            </div>
+            <div class="lf-group">
+              <label>Upload Image</label>
+              <label class="lf-dropzone">
+                <div class="lf-dropzone-icon">📸</div>
+                <span>Tap or drag image here<br/><small>(Optional but recommended)</small></span>
+                <input type="file" style="display:none;" />
+              </label>
+            </div>
+            <div class="lf-group">
+              <label>Additional Description</label>
+              <textarea placeholder="Describe any identifying marks, colors, etc."></textarea>
+            </div>
+            <button class="lf-submit" type="submit">Submit Report →</button>
+          </form>
+        </div>
+
+        <!-- Found Items Board -->
+        <div class="lf-card">
+          <h3>Found Items Board</h3>
+          <div class="lf-board">
+            <div class="lf-item">
+              <div class="lf-item-img">📱</div>
+              <div class="lf-item-info">
+                <h4>iPhone 15 Pro — Black</h4>
+                <p>Found near Food Stall B, North Stand.</p>
+                <span class="lf-item-badge">At Security Desk 1</span>
+              </div>
+            </div>
+            <div class="lf-item">
+              <div class="lf-item-img">🔑</div>
+              <div class="lf-item-info">
+                <h4>Set of 3 Keys + Keychain</h4>
+                <p>Found in Washroom, East Level 2.</p>
+                <span class="lf-item-badge">At Help Desk C</span>
+              </div>
+            </div>
+            <div class="lf-item">
+              <div class="lf-item-img">👜</div>
+              <div class="lf-item-info">
+                <h4>Brown Messenger Bag</h4>
+                <p>Left at Seat Row 22, Block A.</p>
+                <span class="lf-item-badge">At Lost & Found Hub</span>
+              </div>
+            </div>
+            <div class="lf-item">
+              <div class="lf-item-img">🧢</div>
+              <div class="lf-item-info">
+                <h4>Blue Team Cap</h4>
+                <p>Found near Gate 4 exit.</p>
+                <span class="lf-item-badge">At Security Desk 4</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="footer">
+    <div class="container footer-in">
+      <div class="fb">
+        <div class="flogo">⚡ StadiumIQ</div>
+        <p>Smart Stadium Experience System — Hackathon 2025</p>
+        <div class="fbadges"><span class="fb2">🏆 Smart Cities</span><span class="fb2">🤖 AI/ML</span><span class="fb2">🏥 Medical</span><span class="fb2">📡 IoT</span></div>
+      </div>
+      <div class="fnav">
+        <div class="fn"><strong>Features</strong><a href="navigation.html">Navigation</a><a href="heatmap.html">Heatmap</a><a href="food.html">Food Order</a><a href="emergency.html">Emergency</a></div>
+        <div class="fn"><strong>Safety</strong><a href="security.html">Security</a><a href="medical.html">Medical</a><a href="safety-map.html">Safety Map</a><a href="lost-found.html">Lost & Found</a></div>
+        <div class="fn"><strong>Account</strong><a href="index.html">Sign In</a><a href="index.html?mode=signup">Sign Up</a><a href="home.html">← Home</a></div>
+      </div>
+    </div>
+    <div class="fbot">Built with ❤️ for the Hackathon · StadiumIQ © 2025</div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

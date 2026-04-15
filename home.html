@@ -29,7 +29,8 @@
     .fc-explore.green { background: rgba(34,197,94,.1);   border-color: rgba(34,197,94,.25);  color: rgba(74,222,128,.9); }
     .fc-explore.purple{ background: rgba(139,92,246,.1);  border-color: rgba(139,92,246,.25); color: rgba(196,181,253,.9); }
     .fc-explore.red   { background: rgba(239,68,68,.1);   border-color: rgba(239,68,68,.25);  color: rgba(252,165,165,.9); }
-
+    .fc-explore.yellow{ background: rgba(234,179,8,.1);   border-color: rgba(234,179,8,.25);  color: rgba(250,204,21,.9); }
+    .fc-glow.yellow   { background: radial-gradient(circle,rgba(234,179,8,.22),transparent 70%); }
     /* How It Works compact */
     .hiw-compact { padding: 4.5rem 0; background: transparent; }
     .hiw-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2.5rem; }
@@ -75,6 +76,7 @@
       <li><a href="security.html">Security</a></li>
       <li><a href="medical.html">Medical</a></li>
       <li><a href="safety-map.html">Safety Map</a></li>
+      <li><a href="lost-found.html">Lost&amp;Found</a></li>
     </ul>
     <div style="display:flex;align-items:center;gap:.6rem;flex-shrink:0">
       <a href="index.html" style="padding:.45rem .9rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:8px;color:rgba(255,255,255,.8);text-decoration:none;font-size:.85rem;font-weight:500;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,.12)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">Sign In</a>
@@ -276,6 +278,24 @@
             </div>
             <div class="tech-row"><span class="tc">FCM Push</span><span class="tc">Location API</span><span class="tc">Recommendation Engine</span><span class="tc">Real-time Rules</span></div>
             <span class="fc-explore purple">Explore Feature →</span>
+          </div>
+        </a>
+
+        <!-- F8 Lost & Found -->
+        <a href="lost-found.html" class="fcard-link" data-delay="100">
+          <div class="fcard fcard-inner" style="margin:0">
+            <div class="fc-glow yellow"></div>
+            <div class="fc-top"><span class="fcn">08</span><span class="fci">🎒</span></div>
+            <h3>Lost & Found</h3>
+            <p>A digital bulletin board and reporting system to instantly log missing items or verify recovered belongings.</p>
+            <ul class="fc-list">
+              <li>Upload item images</li>
+              <li>Tag exact locations</li>
+              <li>Live found-item board</li>
+              <li>Secure claiming</li>
+            </ul>
+            <div class="tech-row"><span class="tc">Cloud Sync</span><span class="tc">Forms</span></div>
+            <span class="fc-explore yellow">Explore Feature →</span>
           </div>
         </a>
 
