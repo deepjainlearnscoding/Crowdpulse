@@ -1,46 +1,42 @@
 // js/heatmap.js
-// Attaches heatmap layer to Google Map and listens to Firebase Database
+// Attaches Leaflet heatmap layer and listens to Firebase Database
 document.addEventListener('DOMContentLoaded', () => {
-    let heatmap = null;
+    let heatLayer = null;
     let database = null;
     
     // Status UI Elements
     const statusDot = document.getElementById('hm-status-dot');
     const statusText = document.getElementById('hm-status-text');
 
-    window.addEventListener('googleMapReady', () => {
+    window.addEventListener('leafletMapReady', () => {
         const map = window.StadiumMap.map;
         
         // Initialize Firebase stream simulation
         database = new window.FirebaseSimulator(window.StadiumMap.centerLat, window.StadiumMap.centerLng);
         
         database.onSnapshot((data) => {
-            // Convert to Google Maps Heatmap data format
-            const heatMapData = data.map(pt => ({
-                location: new google.maps.LatLng(pt.lat, pt.lng),
-                weight: pt.weight
-            }));
+            // Convert to Leaflet Heatmap format: [lat, lng, intensity]
+            const heatMapData = data.map(pt => [pt.lat, pt.lng, pt.weight]);
 
             // Throttle & UI update status simulation
             indicateUpdating();
             
-            if (!heatmap) {
-                heatmap = new google.maps.visualization.HeatmapLayer({
-                    data: heatMapData,
-                    map: map,
-                    radius: 35,
-                    opacity: 0.8,
-                    maxIntensity: 50,
-                    gradient: [
-                        'rgba(0, 255, 255, 0)',
-                        'rgba(34, 197, 94, 1)',   // Green: Low
-                        'rgba(245, 158, 11, 1)',  // Yellow: Medium
-                        'rgba(239, 68, 68, 1)'    // Red: High
-                    ]
-                });
+            if (!heatLayer) {
+                heatLayer = L.heatLayer(heatMapData, {
+                    radius: 40,
+                    blur: 25,
+                    maxZoom: 17,
+                    max: 5,
+                    gradient: {
+                        0.4: 'green',
+                        0.6: 'yellow',
+                        0.8: 'orange',
+                        1.0: 'red'
+                    }
+                }).addTo(map);
             } else {
-                // Update existing dataset instead of re-instantiating the layer map
-                heatmap.setData(heatMapData);
+                // Update existing dataset efficiently
+                heatLayer.setLatLngs(heatMapData);
             }
             
             setTimeout(() => {
@@ -75,8 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('sb-safe-val').textContent = `Gate 8 (${safeCrowd} fans)`;
     }
 
-    // Mock Tooltips since heatmap layers themselves don't support native object tooltips easily 
-    // We add simulated bounds to hover
+    // Interactive custom tooltips mock
     function setupInteractiveTooltips() {
         const tooltip = document.getElementById('hm-tooltip');
         if (!tooltip) return;
