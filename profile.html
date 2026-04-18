@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile — CrowdPulse</title>
+  <meta name="description" content="View and manage your CrowdPulse account profile, preferences, and session." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css?v=3" />
+  <style>
+    /* ── Page Layout ── */
+    .profile-page {
+      min-height: 100vh;
+      padding-top: 80px;
+      padding-bottom: 80px;
+    }
+
+    /* ── Hero Banner ── */
+    .profile-hero {
+      position: relative;
+      overflow: hidden;
+      padding: 3.5rem 0 2.5rem;
+      margin-bottom: 0;
+    }
+    .profile-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(79,142,247,.18) 0%, transparent 55%),
+                  radial-gradient(ellipse at 75% 30%, rgba(168,85,247,.14) 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .profile-hero-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(79,142,247,.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79,142,247,.035) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+
+    /* ── Avatar Block ── */
+    .profile-avatar-block {
+      position: relative; z-index: 2;
+      display: flex; align-items: flex-end; gap: 1.75rem;
+      flex-wrap: wrap;
+    }
+    .profile-avatar-wrap {
+      position: relative; flex-shrink: 0;
+    }
+    .profile-avatar {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1 0%, #06b6d4 50%, #a855f7 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; font-weight: 900; color: white;
+      border: 3px solid rgba(255,255,255,.12);
+      box-shadow: 0 0 0 4px rgba(79,142,247,.25), 0 16px 48px rgba(0,0,0,.45);
+      user-select: none;
+      letter-spacing: -.01em;
+    }
+    .profile-status-dot {
+      position: absolute; bottom: 5px; right: 5px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--green);
+      border: 2.5px solid #050817;
+      box-shadow: 0 0 12px rgba(34,197,94,.6);
+      animation: pd 2s ease infinite;
+    }
+    .profile-name-block { flex: 1; min-width: 0; }
+    .profile-name {
+      font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+      font-weight: 900; color: white; line-height: 1.15;
+      margin-bottom: .35rem; letter-spacing: -.02em;
+    }
+    .profile-email {
+      font-size: .9rem; color: var(--t2);
+      display: flex; align-items: center; gap: .45rem;
+      margin-bottom: .7rem;
+    }
+    .profile-email svg { flex-shrink: 0; opacity: .6; }
+    .profile-badges { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .pbadge-hero {
+      padding: 4px 14px; border-radius: 50px;
+      font-size: .74rem; font-weight: 700; letter-spacing: .04em;
+    }
+    .pbadge-hero.verified {
+      background: rgba(79,142,247,.15); border: 1px solid rgba(79,142,247,.3);
+      color: var(--a);
+    }
+    .pbadge-hero.pro {
+      background: linear-gradient(135deg, rgba(168,85,247,.18), rgba(6,182,212,.12));
+      border: 1px solid rgba(168,85,247,.3); color: #c084fc;
+    }
+    .pbadge-hero.active {
+      background: rgba(34,197,94,.12); border: 1px solid rgba(34,197,94,.28);
+      color: var(--green);
+    }
+
+    /* ── Main Grid ── */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 24px;
+      align-items: start;
+      margin-top: 28px;
+    }
+
+    /* ── Cards ── */
+    .pcard {
+      background: rgba(255,255,255,.045);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 20px;
+      overflow: hidden;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      transition: border-color .25s;
+    }
+    .pcard:hover { border-color: rgba(79,142,247,.22); }
+    .pcard-hdr {
+      display: flex; align-items: center; gap: 12px;
+      padding: 18px 22px; border-bottom: 1px solid rgba(255,255,255,.07);
+      background: rgba(0,0,0,.18);
+    }
+    .pcard-hdr-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; flex-shrink: 0;
+    }
+    .pcard-hdr-icon.blue  { background: rgba(79,142,247,.18); }
+    .pcard-hdr-icon.teal  { background: rgba(34,211,238,.14); }
+    .pcard-hdr-icon.green { background: rgba(34,197,94,.14); }
+    .pcard-hdr-icon.red   { background: rgba(239,68,68,.14); }
+    .pcard-hdr-icon.purple{ background: rgba(168,85,247,.14); }
+    .pcard-hdr h3 {
+      font-size: .95rem; font-weight: 700; color: white;
+    }
+    .pcard-hdr p {
+      font-size: .72rem; color: var(--t3); margin: 0;
+    }
+    .pcard-body { padding: 20px 22px; }
+
+    /* ── Info Rows ── */
+    .info-row {
+      display: flex; align-items: center;
+      gap: 14px; padding: 13px 0;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .info-row:first-child { padding-top: 0; }
+    .info-icon {
+      width: 34px; height: 34px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .95rem; flex-shrink: 0;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.07);
+    }
+    .info-label { font-size: .7rem; color: var(--t3); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 2px; }
+    .info-value { font-size: .88rem; color: white; font-weight: 600; }
+    .info-value.mono { font-family: var(--mono); font-size: .82rem; color: var(--a3); }
+
+    /* ── Stats Strip ── */
+    .stats-strip {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: rgba(255,255,255,.06);
+      border-radius: 14px; overflow: hidden; margin-bottom: 20px;
+    }
+    .stat-cell {
+      background: rgba(255,255,255,.03);
+      padding: 16px 12px; text-align: center;
+      transition: background .2s;
+    }
+    .stat-cell:hover { background: rgba(79,142,247,.06); }
+    .stat-num {
+      font-size: 1.5rem; font-weight: 900; font-family: var(--mono);
+      background: linear-gradient(135deg, var(--a), var(--a3));
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: block; margin-bottom: 3px;
+    }
+    .stat-lbl { font-size: .68rem; color: var(--t3); font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+
+    /* ── Activity Feed ── */
+    .activity-feed { display: flex; flex-direction: column; gap: 10px; }
+    .activity-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 13px 16px;
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06);
+      border-radius: 12px;
+      transition: all .2s;
+      opacity: 0; transform: translateX(-8px);
+      animation: slideIn .4s ease forwards;
+    }
+    .activity-item:hover { background: rgba(255,255,255,.06); border-color: rgba(79,142,247,.2); }
+    @keyframes slideIn { to { opacity: 1; transform: translateX(0); } }
+    .act-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+    .act-title { font-size: .83rem; font-weight: 600; color: white; margin-bottom: 2px; }
+    .act-meta { font-size: .7rem; color: var(--t3); }
+    .act-badge {
+      margin-left: auto; flex-shrink: 0;
+      padding: 3px 9px; border-radius: 50px;
+      font-size: .65rem; font-weight: 700; align-self: center;
+    }
+    .act-badge.food   { background: rgba(34,197,94,.15);  color: var(--green); }
+    .act-badge.nav    { background: rgba(79,142,247,.15);  color: var(--a); }
+    .act-badge.alert  { background: rgba(245,158,11,.15); color: var(--yellow); }
+    .act-badge.found  { background: rgba(168,85,247,.15); color: #c084fc; }
+
+    /* ── Preferences ── */
+    .pref-row {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 13px 0;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .pref-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .pref-row:first-child { padding-top: 0; }
+    .pref-info strong { display: block; font-size: .85rem; font-weight: 600; color: white; margin-bottom: 2px; }
+    .pref-info span { font-size: .72rem; color: var(--t3); }
+    /* Toggle switch */
+    .toggle-switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; cursor: pointer;
+      inset: 0; border-radius: 24px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.15);
+      transition: all .3s;
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute; width: 18px; height: 18px;
+      border-radius: 50%; background: rgba(255,255,255,.5);
+      left: 2px; top: 2px;
+      transition: all .3s;
+    }
+    .toggle-switch input:checked + .toggle-slider {
+      background: linear-gradient(135deg, var(--a), var(--a3));
+      border-color: transparent;
+      box-shadow: 0 0 14px rgba(79,142,247,.4);
+    }
+    .toggle-switch input:checked + .toggle-slider::before {
+      transform: translateX(20px); background: white;
+    }
+
+    /* ── Danger / Logout Area ── */
+    .danger-zone {
+      margin-top: 4px;
+      padding: 18px 22px;
+      background: rgba(239,68,68,.05);
+      border: 1px solid rgba(239,68,68,.18);
+      border-radius: 16px;
+    }
+    .danger-zone h4 {
+      font-size: .8rem; font-weight: 800; color: #f87171;
+      text-transform: uppercase; letter-spacing: .08em; margin-bottom: 14px;
+    }
+    .danger-btns { display: flex; flex-direction: column; gap: 10px; }
+    .btn-logout {
+      display: flex; align-items: center; justify-content: center; gap: .55rem;
+      width: 100%; padding: 13px 20px;
+      background: linear-gradient(135deg, rgba(239,68,68,.25), rgba(239,68,68,.15));
+      border: 1px solid rgba(239,68,68,.45);
+      border-radius: 12px; color: #fca5a5;
+      font-family: var(--font); font-size: .92rem; font-weight: 700;
+      cursor: pointer; transition: all .25s;
+    }
+    .btn-logout:hover {
+      background: linear-gradient(135deg, rgba(239,68,68,.45), rgba(239,68,68,.3));
+      border-color: rgba(239,68,68,.7);
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(239,68,68,.25);
+    }
+    .btn-logout:active { transform: translateY(0); }
+    .btn-logout svg { transition: transform .2s; }
+    .btn-logout:hover svg { transform: translateX(2px); }
+
+    /* ── Session Info ── */
+    .session-info {
+      display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;
+    }
+    .si-row {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: .8rem;
+    }
+    .si-row span:first-child { color: var(--t3); }
+    .si-row span:last-child { color: var(--t2); font-weight: 600; font-family: var(--mono); font-size: .76rem; }
+    .si-row .si-live {
+      display: inline-flex; align-items: center; gap: 5px;
+      color: var(--green); font-family: var(--font); font-weight: 700;
+    }
+    .si-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pd 2s ease infinite; }
+
+    /* ── Quick Nav ── */
+    .quick-nav { display: flex; flex-direction: column; gap: 6px; }
+    .qnav-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 11px 16px;
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+      border-radius: 11px; text-decoration: none;
+      transition: all .2s;
+    }
+    .qnav-item:hover {
+      background: rgba(79,142,247,.08); border-color: rgba(79,142,247,.25);
+      transform: translateX(3px);
+    }
+    .qnav-icon { font-size: 1.1rem; flex-shrink: 0; }
+    .qnav-label { flex: 1; font-size: .86rem; font-weight: 600; color: var(--t2); }
+    .qnav-arrow { color: var(--t3); font-size: .8rem; }
+    .qnav-item:hover .qnav-label { color: white; }
+    .qnav-item:hover .qnav-arrow { color: var(--a); }
+
+    /* ── Toast ── */
+    .profile-toast {
+      position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: rgba(11,18,33,.95); border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(14px); color: white; padding: .85rem 1.6rem;
+      border-radius: 14px; font-size: .9rem; font-weight: 600;
+      transition: transform .4s cubic-bezier(0.34,1.56,0.64,1);
+      z-index: 9999; pointer-events: none; white-space: nowrap;
+      box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    }
+    .profile-toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── Logout Confirmation Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 10000;
+      background: rgba(0,0,0,.7); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+    .modal-box {
+      background: rgba(10,16,30,.97); border: 1px solid rgba(255,255,255,.12);
+      border-radius: 20px; padding: 2rem 2.2rem; max-width: 400px; width: 90%;
+      text-align: center;
+      transform: scale(.92); transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+      box-shadow: 0 32px 80px rgba(0,0,0,.6);
+    }
+    .modal-overlay.open .modal-box { transform: scale(1); }
+    .modal-icon { font-size: 2.8rem; margin-bottom: .75rem; }
+    .modal-box h3 { font-size: 1.25rem; font-weight: 800; color: white; margin-bottom: .5rem; }
+    .modal-box p { color: var(--t2); font-size: .88rem; line-height: 1.55; margin-bottom: 1.5rem; }
+    .modal-btns { display: flex; gap: .75rem; }
+    .modal-btn-cancel {
+      flex: 1; padding: .8rem; border-radius: 11px; font-family: var(--font); font-size: .9rem; font-weight: 600;
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+      color: var(--t2); cursor: pointer; transition: all .2s;
+    }
+    .modal-btn-cancel:hover { background: rgba(255,255,255,.12); color: white; }
+    .modal-btn-confirm {
+      flex: 1; padding: .8rem; border-radius: 11px; font-family: var(--font); font-size: .9rem; font-weight: 700;
+      background: linear-gradient(135deg, #ef4444, #dc2626); border: none;
+      color: white; cursor: pointer; transition: all .2s;
+      box-shadow: 0 4px 18px rgba(239,68,68,.35);
+    }
+    .modal-btn-confirm:hover { opacity: .88; transform: translateY(-1px); }
+
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .profile-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .profile-avatar-block { flex-direction: column; align-items: center; text-align: center; }
+      .profile-badges { justify-content: center; }
+      .profile-email { justify-content: center; }
+      .stats-strip { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-logo">
+      <a href="home.html" style="text-decoration:none;display:flex;align-items:center;gap:.45rem;color:inherit">
+        <img src="logo.png" alt="CrowdPulse Logo" style="width:32px;height:32px;object-fit:contain;mix-blend-mode:multiply;filter:contrast(1.1);">
+        <span class="logo-text">CrowdPulse</span>
+      </a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="navigation.html">Navigation</a></li>
+      <li><a href="heatmap.html">Heatmap</a></li>
+      <li><a href="food.html">Food</a></li>
+      <li><a href="emergency.html">Emergency</a></li>
+      <li><a href="security.html">Security</a></li>
+      <li><a href="medical.html">Medical</a></li>
+      <li><a href="safety-map.html">Safety Map</a></li>
+      <li><a href="lost-found.html">Lost&amp;Found</a></li>
+    </ul>
+    <div class="nav-actions" style="display:flex;align-items:center;gap:.6rem;flex-shrink:0">
+      <a href="profile.html" style="padding:.45rem .9rem;background:rgba(79,142,247,.18);border:1px solid rgba(79,142,247,.4);border-radius:8px;color:var(--a);text-decoration:none;font-size:.85rem;font-weight:600;">My Profile</a>
+    </div>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </nav>
+
+  <div class="profile-page">
+    <!-- Hero Banner -->
+    <div class="profile-hero">
+      <div class="profile-hero-grid"></div>
+      <div class="container">
+        <div class="profile-avatar-block">
+          <div class="profile-avatar-wrap">
+            <div class="profile-avatar" id="avatarInitials">—</div>
+            <div class="profile-status-dot"></div>
+          </div>
+          <div class="profile-name-block">
+            <div class="profile-name" id="profileDisplayName">Loading…</div>
+            <div class="profile-email">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+              <span id="profileEmailDisplay">—</span>
+            </div>
+            <div class="profile-badges">
+              <span class="pbadge-hero verified">✓ Verified</span>
+              <span class="pbadge-hero pro">⚡ Pro Fan</span>
+              <span class="pbadge-hero active">● Active Session</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container" style="margin-top: 0;">
+      <div class="profile-grid">
+
+        <!-- LEFT COLUMN -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+
+          <!-- Personal Info Card -->
+          <div class="pcard">
+            <div class="pcard-hdr">
+              <div class="pcard-hdr-icon blue">👤</div>
+              <div>
+                <h3>Account Details</h3>
+                <p>Your personal information</p>
+              </div>
+            </div>
+            <div class="pcard-body">
+              <div class="info-row">
+                <div class="info-icon">🪪</div>
+                <div>
+                  <div class="info-label">Full Name</div>
+                  <div class="info-value" id="infoName">—</div>
+                </div>
+              </div>
+              <div class="info-row">
+                <div class="info-icon">📧</div>
+                <div>
+                  <div class="info-label">Email Address</div>
+                  <div class="info-value" id="infoEmail">—</div>
+                </div>
+              </div>
+              <div class="info-row">
+                <div class="info-icon">🏟️</div>
+                <div>
+                  <div class="info-label">Home Stadium</div>
+                  <div class="info-value">Wankhede Stadium, Mumbai</div>
+                </div>
+              </div>
+              <div class="info-row">
+                <div class="info-icon">🎟️</div>
+                <div>
+                  <div class="info-label">Fan ID</div>
+                  <div class="info-value mono" id="fanId">CP-———</div>
+                </div>
+              </div>
+              <div class="info-row">
+                <div class="info-icon">📅</div>
+                <div>
+                  <div class="info-label">Member Since</div>
+                  <div class="info-value" id="memberSince">—</div>
+                </div>
+              </div>
+              <div class="info-row">
+                <div class="info-icon">🌐</div>
+                <div>
+                  <div class="info-label">Account Type</div>
+                  <div class="info-value">Free · CrowdPulse Fan</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Current Session Card -->
+          <div class="pcard">
+            <div class="pcard-hdr">
+              <div class="pcard-hdr-icon green">🔐</div>
+              <div>
+                <h3>Current Session</h3>
+                <p>Login &amp; security details</p>
+              </div>
+            </div>
+            <div class="pcard-body">
+              <div class="session-info">
+                <div class="si-row">
+                  <span>Status</span>
+                  <span class="si-live"><span class="si-dot"></span>Active</span>
+                </div>
+                <div class="si-row">
+                  <span>Signed in</span>
+                  <span id="sessionTime">—</span>
+                </div>
+                <div class="si-row">
+                  <span>Session ID</span>
+                  <span id="sessionId">—</span>
+                </div>
+                <div class="si-row">
+                  <span>Device</span>
+                  <span id="deviceType">—</span>
+                </div>
+                <div class="si-row">
+                  <span>Browser</span>
+                  <span id="browserType">—</span>
+                </div>
+              </div>
+
+              <!-- Danger Zone -->
+              <div class="danger-zone">
+                <h4>⚠ Session Control</h4>
+                <div class="danger-btns">
+                  <button class="btn-logout" id="logoutBtn" onclick="showLogoutModal()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Log Out of Current Session
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+
+          <!-- Stats Strip -->
+          <div class="stats-strip">
+            <div class="stat-cell">
+              <span class="stat-num">12</span>
+              <span class="stat-lbl">Events Attended</span>
+            </div>
+            <div class="stat-cell">
+              <span class="stat-num">47</span>
+              <span class="stat-lbl">Food Orders</span>
+            </div>
+            <div class="stat-cell">
+              <span class="stat-num">3</span>
+              <span class="stat-lbl">Items Found</span>
+            </div>
+          </div>
+
+          <!-- Notifications Preferences -->
+          <div class="pcard">
+            <div class="pcard-hdr">
+              <div class="pcard-hdr-icon teal">🔔</div>
+              <div>
+                <h3>Notifications</h3>
+                <p>Choose what alerts you receive</p>
+              </div>
+            </div>
+            <div class="pcard-body">
+              <div class="pref-row">
+                <div class="pref-info">
+                  <strong>Emergency Alerts</strong>
+                  <span>Fire, evacuation &amp; safety broadcasts</span>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked id="pref-emergency" onchange="savePref('emergency',this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="pref-row">
+                <div class="pref-info">
+                  <strong>Crowd Heatmap Warnings</strong>
+                  <span>Alerts when zones near you are congested</span>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked id="pref-heatmap" onchange="savePref('heatmap',this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="pref-row">
+                <div class="pref-info">
+                  <strong>Food Order Updates</strong>
+                  <span>Ready-for-pickup &amp; slot reminders</span>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked id="pref-food" onchange="savePref('food',this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="pref-row">
+                <div class="pref-info">
+                  <strong>Navigation Tips</strong>
+                  <span>Optimal route suggestions based on live crowd</span>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="pref-nav" onchange="savePref('nav',this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+              <div class="pref-row">
+                <div class="pref-info">
+                  <strong>Lost &amp; Found Matches</strong>
+                  <span>Notifications when your report gets a match</span>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" checked id="pref-lostfound" onchange="savePref('lostfound',this.checked)">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="pcard">
+            <div class="pcard-hdr">
+              <div class="pcard-hdr-icon purple">⚡</div>
+              <div>
+                <h3>Recent Activity</h3>
+                <p>Your last actions on CrowdPulse</p>
+              </div>
+            </div>
+            <div class="pcard-body" style="padding-top:16px;">
+              <div class="activity-feed">
+                <div class="activity-item" style="animation-delay:.05s">
+                  <span class="act-icon">🍕</span>
+                  <div>
+                    <div class="act-title">Ordered Pizza Slice + Cola</div>
+                    <div class="act-meta">Stall 4 · Pickup 18:45 · 2h ago</div>
+                  </div>
+                  <span class="act-badge food">Food</span>
+                </div>
+                <div class="activity-item" style="animation-delay:.12s">
+                  <span class="act-icon">📍</span>
+                  <div>
+                    <div class="act-title">Navigation to Seat 47B Row 12</div>
+                    <div class="act-meta">4 min route · Gate 3 → North Stand · 3h ago</div>
+                  </div>
+                  <span class="act-badge nav">Nav</span>
+                </div>
+                <div class="activity-item" style="animation-delay:.19s">
+                  <span class="act-icon">⚠️</span>
+                  <div>
+                    <div class="act-title">Crowd Alert — Zone A Congested</div>
+                    <div class="act-meta">Rerouted via Gate 2 · 4h ago</div>
+                  </div>
+                  <span class="act-badge alert">Alert</span>
+                </div>
+                <div class="activity-item" style="animation-delay:.26s">
+                  <span class="act-icon">🎒</span>
+                  <div>
+                    <div class="act-title">Lost &amp; Found Report Submitted</div>
+                    <div class="act-meta">Blue backpack · Section C · Yesterday</div>
+                  </div>
+                  <span class="act-badge found">L&amp;F</span>
+                </div>
+                <div class="activity-item" style="animation-delay:.33s">
+                  <span class="act-icon">🍟</span>
+                  <div>
+                    <div class="act-title">Ordered Fries Large + Taco Combo</div>
+                    <div class="act-meta">Stall 7 · Pickup 19:00 · Yesterday</div>
+                  </div>
+                  <span class="act-badge food">Food</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Links -->
+          <div class="pcard">
+            <div class="pcard-hdr">
+              <div class="pcard-hdr-icon blue">🔗</div>
+              <div>
+                <h3>Quick Navigation</h3>
+                <p>Jump to platform features</p>
+              </div>
+            </div>
+            <div class="pcard-body">
+              <div class="quick-nav">
+                <a href="navigation.html" class="qnav-item">
+                  <span class="qnav-icon">📍</span>
+                  <span class="qnav-label">Indoor Navigation</span>
+                  <span class="qnav-arrow">→</span>
+                </a>
+                <a href="heatmap.html" class="qnav-item">
+                  <span class="qnav-icon">🌡️</span>
+                  <span class="qnav-label">Live Crowd Heatmap</span>
+                  <span class="qnav-arrow">→</span>
+                </a>
+                <a href="food.html" class="qnav-item">
+                  <span class="qnav-icon">🍔</span>
+                  <span class="qnav-label">Food Ordering</span>
+                  <span class="qnav-arrow">→</span>
+                </a>
+                <a href="emergency.html" class="qnav-item">
+                  <span class="qnav-icon">🚨</span>
+                  <span class="qnav-label">Emergency Routing</span>
+                  <span class="qnav-arrow">→</span>
+                </a>
+                <a href="lost-found.html" class="qnav-item">
+                  <span class="qnav-icon">🎒</span>
+                  <span class="qnav-label">Lost &amp; Found</span>
+                  <span class="qnav-arrow">→</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /right column -->
+      </div><!-- /grid -->
+    </div><!-- /container -->
+  </div><!-- /profile-page -->
+
+  <!-- Logout Confirmation Modal -->
+  <div class="modal-overlay" id="logoutModal">
+    <div class="modal-box">
+      <div class="modal-icon">👋</div>
+      <h3>Log Out?</h3>
+      <p>You'll be signed out of your current CrowdPulse session and redirected to the login page.</p>
+      <div class="modal-btns">
+        <button class="modal-btn-cancel" onclick="hideLogoutModal()">Stay Signed In</button>
+        <button class="modal-btn-confirm" id="confirmLogoutBtn" onclick="confirmLogout()">Log Out</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="profile-toast" id="profileToast"></div>
+
+  <script src="script.js?v=3"></script>
+  <script>
+    /* ─── Auth keys (must match index.html) ─── */
+    const AUTH_KEYS = {
+      IS_AUTHENTICATED: 'crowdpulse_is_authenticated',
+      REMEMBER_ME: 'crowdpulse_remember_me',
+      REMEMBERED_EMAIL: 'crowdpulse_remembered_email',
+    };
+    const PREFS_KEY = 'crowdpulse_notif_prefs';
+
+    /* ─── Guard: redirect to login if not authenticated ─── */
+    (function guard() {
+      const isAuth = localStorage.getItem(AUTH_KEYS.IS_AUTHENTICATED) === 'true';
+      if (!isAuth) {
+        window.location.replace('index.html');
+      }
+    })();
+
+    /* ─── Toast helper ─── */
+    function showToast(msg) {
+      const t = document.getElementById('profileToast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3200);
+    }
+
+    /* ─── Hydrate user info from localStorage ─── */
+    function hydrateProfile() {
+      const email = localStorage.getItem(AUTH_KEYS.REMEMBERED_EMAIL) || 'fan@crowdpulse.app';
+
+      // Use stored name (from signup) or derive from email
+      const storedName = localStorage.getItem('crowdpulse_user_name') || '';
+      const rawName = storedName || email.split('@')[0]
+        .replace(/[._-]/g, ' ')
+        .replace(/\b\w/g, c => c.toUpperCase()) || 'CrowdPulse Fan';
+      const displayName = rawName;
+
+      // Initials for avatar
+      const parts = displayName.trim().split(' ');
+      const initials = parts.length >= 2
+        ? parts[0][0] + parts[parts.length - 1][0]
+        : displayName.slice(0, 2).toUpperCase();
+
+      document.getElementById('avatarInitials').textContent = initials;
+      document.getElementById('profileDisplayName').textContent = displayName;
+      document.getElementById('profileEmailDisplay').textContent = email;
+      document.getElementById('infoName').textContent = displayName;
+      document.getElementById('infoEmail').textContent = email;
+
+      // Fan ID from email hash (simple)
+      const hash = Array.from(email).reduce((a, c) => (a << 5) - a + c.charCodeAt(0), 0) >>> 0;
+      document.getElementById('fanId').textContent = 'CP-' + hash.toString(16).toUpperCase().slice(0, 8);
+
+      // Member since (stored or today)
+      let since = localStorage.getItem('crowdpulse_member_since');
+      if (!since) {
+        since = new Date().toISOString();
+        localStorage.setItem('crowdpulse_member_since', since);
+      }
+      document.getElementById('memberSince').textContent =
+        new Date(since).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    /* ─── Session Info ─── */
+    function hydrateSession() {
+      // Session time
+      let loginTime = sessionStorage.getItem('crowdpulse_login_time');
+      if (!loginTime) {
+        loginTime = new Date().toISOString();
+        sessionStorage.setItem('crowdpulse_login_time', loginTime);
+      }
+      document.getElementById('sessionTime').textContent =
+        new Date(loginTime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }) +
+        ' · ' + new Date(loginTime).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+
+      // Session ID (short random)
+      let sid = sessionStorage.getItem('crowdpulse_sid');
+      if (!sid) {
+        sid = Math.random().toString(36).slice(2, 10).toUpperCase();
+        sessionStorage.setItem('crowdpulse_sid', sid);
+      }
+      document.getElementById('sessionId').textContent = sid;
+
+      // Device
+      const ua = navigator.userAgent;
+      const isMobile = /Mobi|Android|iPhone|iPad/.test(ua);
+      document.getElementById('deviceType').textContent = isMobile ? '📱 Mobile' : '💻 Desktop';
+
+      // Browser
+      let browser = 'Unknown';
+      if (ua.includes('Chrome') && !ua.includes('Edg')) browser = 'Chrome';
+      else if (ua.includes('Firefox')) browser = 'Firefox';
+      else if (ua.includes('Safari') && !ua.includes('Chrome')) browser = 'Safari';
+      else if (ua.includes('Edg')) browser = 'Edge';
+      document.getElementById('browserType').textContent = browser;
+    }
+
+    /* ─── Preferences persistence ─── */
+    function loadPrefs() {
+      const saved = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
+      const defaults = { emergency: true, heatmap: true, food: true, nav: false, lostfound: true };
+      const prefs = { ...defaults, ...saved };
+      Object.entries(prefs).forEach(([key, val]) => {
+        const el = document.getElementById('pref-' + key);
+        if (el) el.checked = val;
+      });
+    }
+
+    function savePref(key, val) {
+      const saved = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
+      saved[key] = val;
+      localStorage.setItem(PREFS_KEY, JSON.stringify(saved));
+      showToast(val ? '🔔 Notification enabled' : '🔕 Notification disabled');
+    }
+
+    /* ─── Logout Modal ─── */
+    function showLogoutModal() {
+      document.getElementById('logoutModal').classList.add('open');
+    }
+    function hideLogoutModal() {
+      document.getElementById('logoutModal').classList.remove('open');
+    }
+
+    function confirmLogout() {
+      const btn = document.getElementById('confirmLogoutBtn');
+      btn.textContent = 'Signing out…'; btn.disabled = true;
+      setTimeout(() => {
+        // Clear auth state
+        localStorage.removeItem(AUTH_KEYS.IS_AUTHENTICATED);
+        localStorage.removeItem(AUTH_KEYS.REMEMBER_ME);
+        sessionStorage.removeItem('crowdpulse_login_time');
+        sessionStorage.removeItem('crowdpulse_sid');
+        window.location.replace('index.html');
+      }, 800);
+    }
+
+    /* Close modal on overlay click */
+    document.getElementById('logoutModal').addEventListener('click', function(e) {
+      if (e.target === this) hideLogoutModal();
+    });
+
+    /* ─── Init ─── */
+    hydrateProfile();
+    hydrateSession();
+    loadPrefs();
+  </script>
+</body>
+</html>

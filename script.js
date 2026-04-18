@@ -1,4 +1,4 @@
-﻿// ══════════════════════════════════════════
+// ══════════════════════════════════════════
 //  CrowdPulse — script.js
 // ══════════════════════════════════════════
 
@@ -999,4 +999,64 @@ if (qrDispute) {
       qrDispute.style.boxShadow = '';
     }, 5000);
   });
+}
+
+// ── AUTH-AWARE NAV ────────────────────────
+// Runs on every page that loads script.js.
+// Replaces the static "Sign In / Get Started" buttons with
+// a "My Profile" pill when the user is authenticated.
+function updateNavAuth() {
+  const navActions = document.querySelector('.nav-actions');
+  if (!navActions) return;
+
+  const isAuth = localStorage.getItem('crowdpulse_is_authenticated') === 'true';
+  if (!isAuth) return; // Leave Sign In / Get Started as-is for guests
+
+  // Get user's first name for a personal touch
+  const storedName = localStorage.getItem('crowdpulse_user_name') || '';
+  const email      = localStorage.getItem('crowdpulse_remembered_email') || '';
+  const derivedFirst = email.split('@')[0]
+    .replace(/[._-]/g, ' ')
+    .replace(/\b\w/g, c => c.toUpperCase())
+    .split(' ')[0];
+  const firstName = storedName ? storedName.split(' ')[0] : (derivedFirst || 'Fan');
+
+  // Build initials for the mini-avatar
+  const nameParts = (storedName || firstName).trim().split(' ');
+  const initials = nameParts.length >= 2
+    ? nameParts[0][0] + nameParts[nameParts.length - 1][0]
+    : firstName.slice(0, 2).toUpperCase();
+
+  navActions.innerHTML = `
+    <a href="profile.html"
+      id="nav-profile-btn"
+      style="
+        display:inline-flex;align-items:center;gap:.55rem;
+        padding:.4rem .9rem .4rem .4rem;
+        background:rgba(79,142,247,.12);
+        border:1px solid rgba(79,142,247,.32);
+        border-radius:50px;color:var(--a);
+        text-decoration:none;font-size:.85rem;font-weight:600;
+        transition:all .25s;white-space:nowrap;
+      "
+      onmouseover="this.style.background='rgba(79,142,247,.22)';this.style.borderColor='rgba(79,142,247,.55)';this.style.boxShadow='0 0 18px rgba(79,142,247,.22)'"
+      onmouseout="this.style.background='rgba(79,142,247,.12)';this.style.borderColor='rgba(79,142,247,.32)';this.style.boxShadow='none'"
+    >
+      <span style="
+        width:26px;height:26px;border-radius:50%;
+        background:linear-gradient(135deg,#6366f1,#06b6d4);
+        display:inline-flex;align-items:center;justify-content:center;
+        font-size:.68rem;font-weight:900;color:white;letter-spacing:-.01em;flex-shrink:0;
+      ">${initials}</span>
+      ${firstName}
+    </a>
+  `;
+}
+
+// Run immediately (script is at bottom of body, DOM is ready)
+// Also hook DOMContentLoaded as a safety net for any edge case
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', updateNavAuth);
+} else {
+  updateNavAuth();
 }

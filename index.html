@@ -387,12 +387,15 @@
       btn.textContent = 'Signing in…'; btn.disabled = true;
       setTimeout(() => {
         localStorage.setItem(AUTH_KEYS.IS_AUTHENTICATED, 'true');
+        // Always store email so profile page can show it
+        if (email) localStorage.setItem(AUTH_KEYS.REMEMBERED_EMAIL, email);
         if (rememberMe && email) {
           localStorage.setItem(AUTH_KEYS.REMEMBER_ME, 'true');
-          localStorage.setItem(AUTH_KEYS.REMEMBERED_EMAIL, email);
         } else {
           localStorage.setItem(AUTH_KEYS.REMEMBER_ME, 'false');
-          localStorage.removeItem(AUTH_KEYS.REMEMBERED_EMAIL);
+        }
+        if (!localStorage.getItem('crowdpulse_member_since')) {
+          localStorage.setItem('crowdpulse_member_since', new Date().toISOString());
         }
         btn.textContent = '✓ Welcome back!';
         btn.style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
@@ -406,10 +409,20 @@
       const pw = document.getElementById('su-password').value;
       const cf = document.getElementById('su-confirm').value;
       if (pw !== cf) { showToast('❌ Passwords do not match.'); return; }
+      const nameInput = document.getElementById('su-name');
+      const emailInput = document.getElementById('su-email');
+      const name = (nameInput?.value || '').trim();
+      const email = (emailInput?.value || '').trim().toLowerCase();
       const btn = document.getElementById('su-btn');
       btn.textContent = 'Creating account…'; btn.disabled = true;
       setTimeout(() => {
         localStorage.setItem(AUTH_KEYS.IS_AUTHENTICATED, 'true');
+        if (name) localStorage.setItem('crowdpulse_user_name', name);
+        if (email) {
+          localStorage.setItem(AUTH_KEYS.REMEMBER_ME, 'true');
+          localStorage.setItem(AUTH_KEYS.REMEMBERED_EMAIL, email);
+        }
+        localStorage.setItem('crowdpulse_member_since', new Date().toISOString());
         btn.textContent = '✓ Account created!';
         btn.style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
         showToast('🎉 Account created! Welcome to CrowdPulse!');
