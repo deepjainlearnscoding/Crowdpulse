@@ -18,6 +18,83 @@
     .fph-chips { display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem; }
     .back-home { display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:999px;color:rgba(255,255,255,.6);text-decoration:none;font-size:.82rem;font-weight:500;transition:all .2s;margin-bottom:2.5rem; }
     .back-home:hover { background:rgba(255,255,255,.1);color:white; }
+
+    /* Medical Response Styles */
+    .med-banner { display: flex; align-items: center; gap: 1.5rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 100px; padding: 0.75rem 2rem; margin: 2rem 0; position: relative; overflow: hidden; }
+    .mb-pulse { position: absolute; left: 24px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); animation: pulse 1.5s infinite; }
+    @keyframes pulse { 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+    .mb-icon { font-size: 1.5rem; margin-left: 1.5rem; z-index: 1; }
+    .mb-text { flex: 1; color: white; z-index: 1; display:flex; gap:1rem; align-items:center; }
+    .mb-text strong { font-weight: 700; color: #ef4444; }
+    .mb-text span { color: rgba(255, 255, 255, 0.7); font-size: 0.95rem; }
+    .mb-call { background: #ef4444; color: white; padding: 0.5rem 1.25rem; border-radius: 50px; text-decoration: none; font-weight: bold; transition: background 0.3s; z-index: 1; }
+    .mb-call:hover { background: #dc2626; }
+
+    .med-cols { display: grid; grid-template-columns: repeat(1, 1fr); gap: 1.5rem; }
+    @media (min-width: 900px) { .med-cols { grid-template-columns: repeat(3, 1fr); } }
+    .med-col { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 1.5rem; display: flex; flex-direction: column; position: relative; }
+    .mc-hdr { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+    .mc-icon { font-size: 2rem; }
+    .mc-hdr h3 { color: white; font-size: 1.1rem; margin-bottom: 0.2rem; font-weight: 800; }
+    .mc-hdr p { color: rgba(255,255,255,0.5); font-size: 0.85rem; margin: 0; }
+
+    /* Teams */
+    .mc-list { display: flex; flex-direction: column; gap: 1rem; flex: 1; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .mct { display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.04); padding: 1rem; border-radius: 12px; transition: 0.3s; opacity: 1; transform: translateY(0); animation: fadeInUp 0.5s ease backwards; }
+    .mct:hover { background: rgba(255,255,255,0.08); }
+    .mca { font-size: 1.5rem; margin-right: 1rem; }
+    .mci { flex: 1; }
+    .mci strong { display: block; color: white; font-size: 0.95rem; margin-bottom: 0.2rem; }
+    .mci span { display: block; color: rgba(255,255,255,0.5); font-size: 0.8rem; }
+    .mcs { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #0f172a; }
+    .mcs.avail { background: #4ade80; box-shadow: 0 0 10px rgba(34,197,94,0.4); }
+    .mcs.busy { background: #ef4444; box-shadow: 0 0 10px rgba(239,68,68,0.4); }
+
+    .mc-foot { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; gap: 0.5rem; }
+    .msr { display: flex; justify-content: space-between; font-size: 0.9rem; color: rgba(255,255,255,0.6); }
+    .msr strong { color: white; }
+    .msr strong.tg { color: #4ade80; }
+
+    /* Hospitals */
+    .prox-sec { margin-bottom: 1.5rem; }
+    .prox-lbl { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: rgba(255,255,255,0.5); font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center; gap:0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.5rem; }
+    .prox-list { display: flex; flex-direction: column; gap: 0.8rem; }
+    .pc { display: flex; align-items: stretch; justify-content: space-between; background: rgba(255,255,255,0.04); border-radius: 12px; padding: 1rem; transition: 0.3s; opacity: 1; transform: translateY(0); animation: fadeInUp 0.5s ease backwards; }
+    .pc:hover { background: rgba(255,255,255,0.08); }
+    .pl { display: flex; gap: 1rem; flex: 1; }
+    .pi { font-size: 1.5rem; }
+    .pinfo strong { display: block; color: white; font-size: 0.95rem; margin-bottom: 0.2rem; }
+    .pinfo span { display: block; color: rgba(255,255,255,0.5); font-size: 0.8rem; }
+    .pdist { margin-top: 0.3rem !important; color: #38bdf8 !important; font-weight: 500; font-size: 0.75rem !important; }
+    .pact { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; gap: 0.5rem; }
+    .pcall { background: rgba(56,189,248,0.15); color: #38bdf8; font-size: 0.8rem; padding: 0.3rem 0.6rem; border-radius: 6px; text-decoration: none; font-weight: bold; transition: 0.2s;}
+    .pcall:hover { background: rgba(56,189,248,0.3); }
+    .pbadge { font-size: 0.7rem; font-weight: bold; padding: 0.2rem 0.5rem; border-radius: 4px; text-transform: uppercase; }
+    .pbadge.g { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .pbadge.y { background: rgba(245,158,11,0.15); color: #fbbf24; }
+
+    /* Helplines */
+    .hl-list { display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: auto;}
+    .hlc { display: flex; align-items: center; justify-content: space-between; padding: 1rem; border-radius: 12px; background: rgba(255,255,255,0.04); transition: 0.3s; opacity: 1; transform: translateY(0); animation: fadeInUp 0.5s ease backwards; }
+    .hlc:hover { background: rgba(255,255,255,0.08); transform: translateX(5px); }
+    .hlct { display: flex; align-items: center; gap: 1rem; }
+    .hli { font-size: 1.5rem; }
+    .hlin strong { display: block; color: white; font-size: 0.95rem; margin-bottom: 0.2rem; }
+    .hlin span { display: block; color: rgba(255,255,255,0.5); font-size: 0.8rem; }
+    .hcb { padding: 0.4rem 0.8rem; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: bold; transition: 0.2s; }
+    .hcb:hover { filter: brightness(1.2); }
+    .hcb.red { background: rgba(239,68,68,0.15); color: #ef4444; }
+    .hcb.blue { background: rgba(56,189,248,0.15); color: #38bdf8; }
+    .hcb.green { background: rgba(34,197,94,0.15); color: #4ade80; }
+
+    .sos-card { margin-top: 2rem; background: linear-gradient(135deg, rgba(239,68,68,0.15), rgba(0,0,0,0)); border: 1px solid rgba(239,68,68,0.3); border-radius: 16px; padding: 1.5rem; position: relative; overflow: hidden; }
+    .sos-card::before { content: ''; position: absolute; right: -20px; top: -20px; width: 100px; height: 100px; border-radius: 50%; border: 20px solid rgba(239,68,68,0.1); }
+    .sos-emoji { display: inline-flex; background: #ef4444; border-radius: 8px; overflow: hidden; font-weight: 900; color: white; font-size: 1.2rem; margin-bottom: 1rem; position: relative; z-index: 2; padding: 4px; }
+    .sos-txt strong { display: block; color: white; font-size: 1.1rem; margin-bottom: 0.5rem; font-weight: 800; position: relative; z-index: 2; }
+    .sos-txt p { color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-bottom: 1rem; position: relative; z-index: 2; line-height: 1.5; }
+    .sos-feats { display: flex; flex-wrap: wrap; gap: 0.5rem; position: relative; z-index: 2; }
+    .sos-feats span { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); font-size: 0.75rem; padding: 0.3rem 0.6rem; border-radius: 999px; }
   </style>
 </head>
 <body>
@@ -37,7 +114,10 @@
       <li><a href="medical.html" style="color:#06b6d4">Medical</a></li>
       <li><a href="safety-map.html">Safety Map</a></li>
     </ul>
-    <a href="auth.html" class="nav-cta">Sign In</a>
+    <div class="nav-actions" style="display:flex;align-items:center;gap:.6rem;flex-shrink:0">
+      <a href="index.html" style="padding:.45rem .9rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:8px;color:rgba(255,255,255,.8);text-decoration:none;font-size:.85rem;font-weight:500;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,.12)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">Sign In</a>
+      <a href="index.html?mode=signup" class="nav-cta">Get Started</a>
+    </div>
     <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
   </nav>
 
@@ -103,11 +183,12 @@
               <div class="pc hosp" data-delay="160"><div class="pl"><div class="pi">🏥</div><div class="pinfo"><strong>St. Mary's Centre</strong><span>General · Paediatric</span><span class="pdist">3.8 km · ~10 min</span></div></div><div class="pact"><a href="tel:+911800333444" class="pcall">📞 Call</a><span class="pbadge y">ER Only</span></div></div>
             </div>
           </div>
-          <div class="prox-sec" style="margin-top:4px">
-            <div class="prox-lbl">💊 Pharmacies</div>
+          <div class="prox-sec" style="margin-top:1.5rem">
+            <div class="prox-lbl"><span>💊</span> Pharmacies & Drug Stores</div>
             <div class="prox-list">
               <div class="pc pharm" data-delay="0"><div class="pl"><div class="pi">💊</div><div class="pinfo"><strong>Stadium First-Aid Bay</strong><span>Painkillers · Bandages</span><span class="pdist">📍 Gate C Level 1 · On-site</span></div></div><div class="pact"><span class="pbadge g">On-Site</span></div></div>
               <div class="pc pharm" data-delay="80"><div class="pl"><div class="pi">🏪</div><div class="pinfo"><strong>MedPlus Pharmacy</strong><span>Full pharmacy</span><span class="pdist">0.6 km · ~2 min walk</span></div></div><div class="pact"><a href="tel:+911800444555" class="pcall">📞 Call</a><span class="pbadge g">Open</span></div></div>
+              <div class="pc pharm" data-delay="160"><div class="pl"><div class="pi">🏪</div><div class="pinfo"><strong>Apollo Pharmacy 24x7</strong><span>Emergency meds · Retail</span><span class="pdist">1.1 km · ~5 min walk</span></div></div><div class="pact"><a href="tel:+911800444888" class="pcall">📞 Call</a><span class="pbadge g">Open</span></div></div>
             </div>
           </div>
         </div>

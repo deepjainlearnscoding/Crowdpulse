@@ -18,6 +18,83 @@
     .fph-chips { display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem; }
     .back-home { display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:999px;color:rgba(255,255,255,.6);text-decoration:none;font-size:.82rem;font-weight:500;transition:all .2s;margin-bottom:2.5rem; }
     .back-home:hover { background:rgba(255,255,255,.1);color:white; }
+
+    /* ── SSM Toolbar ── */
+    .ssm-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:1rem; margin-bottom:2rem; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:1.25rem 1.5rem; }
+    .ssm-label { color:rgba(255,255,255,0.5); font-size:0.85rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; }
+    .ssm-select { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); color:white; padding:0.6rem 1.2rem; border-radius:10px; font-size:0.95rem; font-family:Outfit,sans-serif; cursor:pointer; flex:1; min-width:220px; outline:none; transition:0.2s; }
+    .ssm-select:hover, .ssm-select:focus { border-color:rgba(6,182,212,0.5); background:rgba(6,182,212,0.05); }
+    .ssm-select option { background:#0d1526; color:white; }
+    .ssm-live-badge { display:inline-flex; align-items:center; gap:0.5rem; background:rgba(34,197,94,0.1); border:1px solid rgba(34,197,94,0.3); border-radius:999px; padding:0.35rem 0.9rem; color:#4ade80; font-size:0.8rem; font-weight:700; }
+    .ldot { width:8px; height:8px; background:#4ade80; border-radius:50%; animation:lp 1.5s ease infinite; box-shadow:0 0 8px rgba(34,197,94,0.7); }
+    @keyframes lp { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+    .ssm-disclaimer { color:rgba(255,255,255,0.3); font-size:0.75rem; width:100%; margin:0; line-height:1.4; }
+
+    /* ── SSM Grid ── */
+    .ssm-grid { display:grid; grid-template-columns:1fr; gap:1.5rem; }
+    @media(min-width:900px){ .ssm-grid { grid-template-columns:1fr 320px; } }
+
+    /* ── Map Card ── */
+    .ssm-map-card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:20px; overflow:hidden; }
+    .ssm-map-hd { display:flex; align-items:center; justify-content:space-between; padding:1.25rem 1.5rem; border-bottom:1px solid rgba(255,255,255,0.07); }
+    .ssm-map-hd h3 { color:white; font-size:1.2rem; font-weight:800; margin-bottom:0.2rem; }
+    .ssm-meta { color:rgba(255,255,255,0.5); font-size:0.85rem; margin:0; }
+    .ssm-occupancy { text-align:right; }
+    .ssm-oc-label { display:block; color:rgba(255,255,255,0.4); font-size:0.75rem; margin-bottom:0.2rem; text-transform:uppercase; letter-spacing:0.05em; }
+    .ssm-occupancy strong { color:#4ade80; font-size:1.4rem; font-weight:900; font-family:'JetBrains Mono',monospace; }
+    .ssm-svg-wrap { padding:1.5rem; display:flex; align-items:center; justify-content:center; }
+    #ssm-svg { width:100%; max-width:440px; height:auto; }
+
+    /* ── SVG Zones (crowd density colours) ── */
+    .ssm-zone { stroke:rgba(0,0,0,0.3); stroke-width:1; cursor:pointer; transition:opacity 0.6s, fill 0.6s; }
+    .ssm-zone:hover { opacity:0.85; stroke:white; stroke-width:1.5; }
+    .ssm-zone.d-low  { fill:rgba(34,197,94,0.45); }
+    .ssm-zone.d-med  { fill:rgba(245,158,11,0.55); }
+    .ssm-zone.d-high { fill:rgba(239,68,68,0.7); }
+    .ssm-pitch { fill:rgba(34,197,94,0.12); stroke:rgba(34,197,94,0.3); stroke-width:1.5; }
+
+    /* ── Gates ── */
+    .ssm-gate { fill:#38bdf8; filter:url(#ssm-glow); cursor:pointer; transition:fill 0.2s; }
+    .ssm-gate:hover { fill:white; }
+    .ssm-gate-label { fill:rgba(255,255,255,0.7); font-size:7px; font-family:Outfit,sans-serif; font-weight:600; pointer-events:none; }
+
+    /* ── Medical ── */
+    .ssm-med-bg { fill:rgba(239,68,68,0.25); stroke:rgba(239,68,68,0.6); stroke-width:1.5; cursor:pointer; transition:fill 0.2s; }
+    .ssm-med-bg:hover { fill:rgba(239,68,68,0.5); }
+    .ssm-med-cross { stroke:#ef4444; stroke-width:2; stroke-linecap:round; pointer-events:none; }
+    .ssm-med-label { fill:rgba(239,68,68,0.7); font-size:6.5px; font-family:Outfit,sans-serif; font-weight:700; pointer-events:none; }
+
+    /* ── Legend ── */
+    .ssm-legend-row { display:flex; flex-wrap:wrap; gap:1rem 1.5rem; padding:1rem 1.5rem; border-top:1px solid rgba(255,255,255,0.07); font-size:0.8rem; color:rgba(255,255,255,0.6); align-items:center; }
+    .ssm-lg { display:inline-block; width:12px; height:12px; border-radius:3px; margin-right:4px; vertical-align:middle; }
+    .ssm-lg.low  { background:rgba(34,197,94,0.6); }
+    .ssm-lg.med  { background:rgba(245,158,11,0.7); }
+    .ssm-lg.high { background:rgba(239,68,68,0.8); }
+    .ssm-lg-gate { color:#38bdf8; font-weight:700; }
+    .ssm-lg-med  { color:#ef4444; font-weight:700; }
+
+    /* ── Sidebar panels ── */
+    .ssm-side { display:flex; flex-direction:column; gap:1rem; }
+    .ssm-panel { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:1.25rem; }
+    .ssm-panel h4 { color:white; font-size:0.9rem; font-weight:700; margin-bottom:1rem; display:flex; align-items:center; justify-content:space-between; text-transform:uppercase; letter-spacing:0.07em; }
+    .ssm-tick { color:rgba(255,255,255,0.35); font-size:0.75rem; font-family:'JetBrains Mono',monospace; font-weight:400; text-transform:none; letter-spacing:0; }
+    .ssm-panel-med { border-color:rgba(239,68,68,0.2); background:rgba(239,68,68,0.03); }
+
+    /* Zone list */
+    .ssm-zone-list, .ssm-gate-list, .ssm-med-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:0.5rem; }
+    .ssm-zone-list li, .ssm-gate-list li, .ssm-med-list li { display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0.75rem; background:rgba(255,255,255,0.04); border-radius:8px; font-size:0.82rem; transition:background 0.2s; }
+    .ssm-zone-list li:hover, .ssm-gate-list li:hover, .ssm-med-list li:hover { background:rgba(255,255,255,0.08); }
+    .ssm-z-name { color:rgba(255,255,255,0.8); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:160px; }
+    .ssm-z-val { font-weight:700; font-size:0.78rem; padding:0.15rem 0.5rem; border-radius:4px; text-transform:uppercase; letter-spacing:0.05em; }
+    .ssm-z-val.low  { color:#4ade80; background:rgba(34,197,94,0.12); }
+    .ssm-z-val.med  { color:#fbbf24; background:rgba(245,158,11,0.12); }
+    .ssm-z-val.high { color:#f87171; background:rgba(239,68,68,0.15); }
+    .ssm-gate-wait  { color:#38bdf8; font-weight:600; font-size:0.78rem; white-space:nowrap; }
+    .ssm-med-list li span:last-child { color:#4ade80; font-weight:600; font-size:0.78rem; }
+
+    /* Animate-in for SSM elements */
+    .ssm-animate { opacity:0; transform:translateY(16px); transition:opacity 0.5s ease, transform 0.5s ease; }
+    .ssm-animate.visible { opacity:1; transform:none; }
   </style>
 </head>
 <body>
@@ -37,7 +114,10 @@
       <li><a href="medical.html">Medical</a></li>
       <li><a href="safety-map.html" style="color:#06b6d4">Safety Map</a></li>
     </ul>
-    <a href="auth.html" class="nav-cta">Sign In</a>
+    <div class="nav-actions" style="display:flex;align-items:center;gap:.6rem;flex-shrink:0">
+      <a href="index.html" style="padding:.45rem .9rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:8px;color:rgba(255,255,255,.8);text-decoration:none;font-size:.85rem;font-weight:500;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,.12)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">Sign In</a>
+      <a href="index.html?mode=signup" class="nav-cta">Get Started</a>
+    </div>
     <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
   </nav>
 
@@ -153,5 +233,9 @@
   </footer>
 
   <script src="script.js"></script>
+  <script>
+    // Force SSM animate elements visible (no scroll needed on this page)
+    document.querySelectorAll('.ssm-animate').forEach(el => el.classList.add('visible'));
+  </script>
 </body>
 </html>

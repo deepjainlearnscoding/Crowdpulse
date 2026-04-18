@@ -594,9 +594,12 @@ ul{list-style:none}
 }
 @media(max-width:768px){
   #navbar{padding:14px 20px}
-  .nav-links,.nav-cta{display:none}
-  .hamburger{display:flex}
-  #navbar.menu-open .nav-links{display:flex;flex-direction:column;position:fixed;top:60px;left:0;right:0;background:rgba(5,7,13,.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding:20px;border-bottom:1px solid rgba(255,255,255,.1);gap:4px;z-index:999}
+  .nav-links,.nav-cta,.nav-actions{display:none}
+  .hamburger{display:flex;z-index:1000}
+  #navbar.menu-open .hamburger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+  #navbar.menu-open .hamburger span:nth-child(2){opacity:0}
+  #navbar.menu-open .hamburger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  #navbar.menu-open .nav-links{display:flex;flex-direction:column;position:fixed;top:60px;left:0;right:0;background:rgba(5,7,13,.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding:20px 20px 30px;border-bottom:1px solid rgba(255,255,255,.1);gap:4px;z-index:999}
   .hw-right,.hw-left{display:none}
   .feat-grid{grid-template-columns:1fr}
   .span2{grid-column:span 1}

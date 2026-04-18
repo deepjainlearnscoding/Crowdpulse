@@ -4,38 +4,40 @@
 
 // ── HERO CANVAS ──────────────────────────
 const canvas = document.getElementById('heroCanvas');
-const ctx = canvas.getContext('2d');
-function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
-resize(); window.addEventListener('resize', resize);
+if (canvas) {
+  const ctx = canvas.getContext('2d');
+  function resize() { canvas.width = innerWidth; canvas.height = innerHeight; }
+  resize(); window.addEventListener('resize', resize);
 
-const PCOLS = ['rgba(79,142,247,','rgba(168,85,247,','rgba(34,211,238,','rgba(34,197,94,'];
-const pts = [];
-class P {
-  constructor() { this.reset(true); }
-  reset(init) {
-    this.x = Math.random() * canvas.width;
-    this.y = init ? Math.random() * canvas.height : canvas.height + 10;
-    this.vx = (Math.random() - .5) * .5; this.vy = -(Math.random() * .9 + .3);
-    this.r = Math.random() * 1.8 + .4; this.a = Math.random() * .5 + .1;
-    this.col = PCOLS[~~(Math.random() * PCOLS.length)];
-    this.life = 0; this.max = Math.random() * 260 + 180;
+  const PCOLS = ['rgba(79,142,247,','rgba(168,85,247,','rgba(34,211,238,','rgba(34,197,94,'];
+  const pts = [];
+  class P {
+    constructor() { this.reset(true); }
+    reset(init) {
+      this.x = Math.random() * canvas.width;
+      this.y = init ? Math.random() * canvas.height : canvas.height + 10;
+      this.vx = (Math.random() - .5) * .5; this.vy = -(Math.random() * .9 + .3);
+      this.r = Math.random() * 1.8 + .4; this.a = Math.random() * .5 + .1;
+      this.col = PCOLS[~~(Math.random() * PCOLS.length)];
+      this.life = 0; this.max = Math.random() * 260 + 180;
+    }
+    tick() { this.x += this.vx; this.y += this.vy; this.life++; this.vx += Math.sin(this.life*.02)*.008; if (this.life > this.max || this.y < -10) this.reset(); }
+    draw() {
+      const f = this.life < 40 ? this.life/40 : this.life > this.max-40 ? (this.max-this.life)/40 : 1;
+      ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+      ctx.fillStyle = this.col + this.a*f + ')'; ctx.fill();
+    }
   }
-  tick() { this.x += this.vx; this.y += this.vy; this.life++; this.vx += Math.sin(this.life*.02)*.008; if (this.life > this.max || this.y < -10) this.reset(); }
-  draw() {
-    const f = this.life < 40 ? this.life/40 : this.life > this.max-40 ? (this.max-this.life)/40 : 1;
-    ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
-    ctx.fillStyle = this.col + this.a*f + ')'; ctx.fill();
+  for (let i = 0; i < 110; i++) pts.push(new P());
+  function links() {
+    for (let i = 0; i < pts.length; i++) for (let j = i+1; j < pts.length; j++) {
+      const dx = pts[i].x-pts[j].x, dy = pts[i].y-pts[j].y, d = Math.sqrt(dx*dx+dy*dy);
+      if (d < 85) { ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.strokeStyle = `rgba(79,142,247,${(1-d/85)*.06})`; ctx.lineWidth=.5; ctx.stroke(); }
+    }
   }
+  function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); links(); pts.forEach(p=>{p.tick();p.draw();}); requestAnimationFrame(anim); }
+  anim();
 }
-for (let i = 0; i < 110; i++) pts.push(new P());
-function links() {
-  for (let i = 0; i < pts.length; i++) for (let j = i+1; j < pts.length; j++) {
-    const dx = pts[i].x-pts[j].x, dy = pts[i].y-pts[j].y, d = Math.sqrt(dx*dx+dy*dy);
-    if (d < 85) { ctx.beginPath(); ctx.moveTo(pts[i].x,pts[i].y); ctx.lineTo(pts[j].x,pts[j].y); ctx.strokeStyle = `rgba(79,142,247,${(1-d/85)*.06})`; ctx.lineWidth=.5; ctx.stroke(); }
-  }
-}
-function anim() { ctx.clearRect(0,0,canvas.width,canvas.height); links(); pts.forEach(p=>{p.tick();p.draw();}); requestAnimationFrame(anim); }
-anim();
 
 // ── MINI HEATMAP (hero widget) ────────────
 const hmGrid = document.getElementById('heroHeatmap');
@@ -891,3 +893,110 @@ tabs.forEach(tab => {
     }
   });
 });
+
+// ── MEDICAL SOS & DISPATCH ────────────────
+const sosCard = document.querySelector('.sos-card');
+if (sosCard) {
+  sosCard.style.cursor = 'pointer';
+  sosCard.addEventListener('click', () => {
+    if (sosCard.classList.contains('active-sos')) return;
+    sosCard.classList.add('active-sos');
+    sosCard.style.boxShadow = '0 0 30px rgba(239,68,68,0.8)';
+    const txt = sosCard.querySelector('.sos-txt strong');
+    if (txt) {
+      sosCard.dataset.orig = txt.innerHTML;
+      txt.innerHTML = '🚨 <span style="color:white">SOS DISPATCHED — MEDICS EN ROUTE</span>';
+    }
+    document.querySelector('.sos-ring').style.borderColor = '#ef4444';
+    toast('🚨 Emergency SOS triggered! Medics dispatched to your location.');
+    setTimeout(() => {
+      if (txt) txt.innerHTML = sosCard.dataset.orig;
+      sosCard.classList.remove('active-sos');
+      sosCard.style.boxShadow = '';
+      document.querySelector('.sos-ring').style.borderColor = 'rgba(239,68,68,.3)';
+      toast('✅ Medical emergency resolved. Unit returning to post.');
+    }, 5000);
+  });
+}
+
+// ── EMERGENCY ACTIONS ─────────────────────
+const emerAlertBtn = document.querySelector('.emer-alert-box');
+if (emerAlertBtn) {
+  emerAlertBtn.style.cursor = 'pointer';
+  emerAlertBtn.addEventListener('click', () => {
+    toast('📡 Mass Alert simulated: sent to 41,200 fans in 1.2s');
+  });
+}
+
+document.querySelectorAll('.rt-card').forEach(card => {
+  card.style.cursor = 'pointer';
+  card.addEventListener('click', () => {
+    const title = card.querySelector('h4')?.textContent || 'Emergency';
+    toast(`🔄 Simulated ${title} Protocol: Rerouting...`);
+  });
+});
+
+// ── SECURITY SECTION INTERACTIVITY ────────
+
+// Panel 0: Report
+document.querySelectorAll('.sopt').forEach(opt => {
+  opt.style.cursor = 'pointer';
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('.sopt').forEach(o => o.style.opacity = '0.4');
+    opt.style.opacity = '1';
+    opt.style.transform = 'scale(1.03)';
+    setTimeout(() => opt.style.transform = 'none', 200);
+  });
+});
+
+const submitReport = document.querySelector('.spvp-submit');
+if (submitReport) {
+  submitReport.style.cursor = 'pointer';
+  submitReport.addEventListener('click', () => {
+    const orig = submitReport.innerHTML;
+    submitReport.innerHTML = '✅ Report Sent Successfully';
+    submitReport.style.background = '#22c55e';
+    toast('📡 Incident report E2E encrypted and sent to Control Room.');
+    setTimeout(() => {
+      submitReport.innerHTML = orig;
+      submitReport.style.background = '';
+      document.querySelectorAll('.sopt').forEach(o => { o.style.opacity = '1'; o.style.transform = 'none'; });
+    }, 4000);
+  });
+}
+
+document.querySelectorAll('.spm').forEach(btn => {
+  btn.style.cursor = 'pointer';
+  btn.addEventListener('click', () => toast('📸 Media attached to encrypted report structure.'));
+});
+
+// Panel 2: Dispatch
+document.querySelectorAll('.svs-inc').forEach(inc => {
+  inc.style.cursor = 'pointer';
+  inc.addEventListener('click', () => {
+    const t = inc.querySelector('strong')?.textContent || 'Incident';
+    toast(`🔍 Viewing live details for ${t}`);
+  });
+});
+
+// Panel 3: Seat Dispute
+const qrDispute = document.querySelector('.qr-dispute');
+if (qrDispute) {
+  qrDispute.style.cursor = 'pointer';
+  qrDispute.addEventListener('click', () => {
+    const orig = qrDispute.innerHTML;
+    toast('🚨 Seat Dispute Alert sent. Security Officer Kumar dispatched to C12.');
+    qrDispute.innerHTML = '✅ Officer Dispatched';
+    qrDispute.style.background = 'rgba(34,197,94,0.1)';
+    qrDispute.style.color = '#4ade80';
+    qrDispute.style.borderColor = 'rgba(34,197,94,0.3)';
+    qrDispute.style.boxShadow = '0 0 15px rgba(34,197,94,0.2)';
+    setTimeout(() => {
+      qrDispute.innerHTML = orig;
+      qrDispute.style.background = '';
+      qrDispute.style.color = '';
+      qrDispute.style.borderColor = '';
+      qrDispute.style.boxShadow = '';
+    }, 5000);
+  });
+}

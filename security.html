@@ -19,6 +19,25 @@
     .back-home { display:inline-flex;align-items:center;gap:.4rem;padding:.5rem 1rem;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:999px;color:rgba(255,255,255,.6);text-decoration:none;font-size:.82rem;font-weight:500;transition:all .2s;margin-bottom:2.5rem; }
     .back-home:hover { background:rgba(255,255,255,.1);color:white; }
     .nav-links-feature a.here { color: #06b6d4; }
+    
+    /* Security Interactive Mockup Styles */
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .sec-view { animation: fadeIn 0.3s ease; height: 100%; display: flex; flex-direction: column; width: 100%; }
+    .sec-view.hidden { display: none; }
+    .loc-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px 14px; margin-bottom: 0.6rem; cursor: pointer; transition: 0.2s; color: white; display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; font-weight: 500; }
+    .loc-card:hover { background: rgba(34,197,94,0.1); border-color: #4ade80; }
+    .sopt { cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
+    .sopt:hover { filter: brightness(1.2); outline: none !important; transform: scale(1.02); }
+    .sopt.selected { border-color: white; box-shadow: 0 0 15px rgba(255,255,255,0.15); transform: scale(1.02); filter: brightness(1.2); }
+    .spm { cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
+    .spm.selected { background: rgba(34,197,94,0.15) !important; color: #4ade80; border-color: rgba(34,197,94,0.4); }
+    .spvp-submit { cursor: pointer; text-align: center; transition: 0.2s; }
+    .spvp-submit:hover { opacity: 0.9; transform: translateY(-2px); }
+    .status-timeline { display: flex; flex-direction: column; gap: 1rem; }
+    .st-step { display: flex; align-items: center; gap: 1rem; color: rgba(255,255,255,0.4); transition: all 0.3s; }
+    .st-step.active { color: white; transform: scale(1.02); transform-origin: left; }
+    .st-step span { width: 32px; height: 32px; background: rgba(255,255,255,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s; }
+    .st-step.active span { background: #4ade80; border-color: #4ade80; color: #0f172a; box-shadow: 0 0 15px rgba(34,197,94,0.4); font-weight: 800; }
   </style>
 </head>
 <body>
@@ -38,7 +57,10 @@
       <li><a href="medical.html">Medical</a></li>
       <li><a href="safety-map.html">Safety Map</a></li>
     </ul>
-    <a href="auth.html" class="nav-cta">Sign In</a>
+    <div class="nav-actions" style="display:flex;align-items:center;gap:.6rem;flex-shrink:0">
+      <a href="index.html" style="padding:.45rem .9rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:8px;color:rgba(255,255,255,.8);text-decoration:none;font-size:.85rem;font-weight:500;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,.12)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">Sign In</a>
+      <a href="index.html?mode=signup" class="nav-cta">Get Started</a>
+    </div>
     <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
   </nav>
 
@@ -103,20 +125,65 @@
               </div>
             </div>
             <div class="sp-visual">
-              <div class="spv-phone">
-                <div class="spvp-hdr"><div class="back">‹</div><span>Report Issue</span><div class="anon-pill">Anon</div></div>
-                <div class="spvp-loc"><span class="spvp-dot"></span> Zone E4 · Seat 22 · Live</div>
-                <div class="spvp-opts">
-                  <div class="sopt r">⚔️ Fight / Aggression</div>
-                  <div class="sopt y">🪑 Seat Dispute</div>
-                  <div class="sopt o">🚨 Harassment</div>
-                  <div class="sopt b">🏥 Medical Emergency</div>
+              <div class="spv-phone" style="display:flex; flex-direction:column; padding: 1.25rem;">
+                
+                <!-- View 1: Location -->
+                <div id="sec-view-loc" class="sec-view">
+                  <div class="spvp-hdr" style="margin-bottom:1.5rem"><div class="back" style="visibility:hidden">‹</div><span>Select Location</span><div class="anon-pill" style="cursor:pointer; transition:0.2s;" onclick="toggleAnonMockup()">Anon</div></div>
+                  <div class="spvp-body" style="flex:1">
+                    <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin-bottom:1rem;">Where is the issue happening?</p>
+                    <div class="loc-card" style="border: 1px solid #4ade80; background: rgba(34,197,94,0.1);" onclick="useSecCurrentLoc(this)">
+                      <div style="display:flex;align-items:center;gap:0.5rem;font-weight:bold;color:#4ade80">
+                        <span id="cloc-icon">📍</span> <span id="cloc-text">My Current Location (Auto-detect)</span>
+                      </div>
+                      <span style="color:rgba(34,197,94,0.5)">›</span>
+                    </div>
+                    <div class="loc-card" onclick="selectSecLoc('North Stand Block A')">North Stand Block A <span style="color:rgba(255,255,255,0.3)">›</span></div>
+                    <div class="loc-card" onclick="selectSecLoc('Gate 4 Entry')">Gate 4 Entry <span style="color:rgba(255,255,255,0.3)">›</span></div>
+                    <div class="loc-card" onclick="selectSecLoc('Zone E4 · Seat 22')">Zone E4 · Seat 22 <span style="color:rgba(255,255,255,0.3)">›</span></div>
+                    <div class="loc-card" onclick="selectSecLoc('Food Stall 2')">Food Stall 2 <span style="color:rgba(255,255,255,0.3)">›</span></div>
+                  </div>
                 </div>
-                <div class="spvp-media">
-                  <div class="spm">📸 Add Photo</div>
-                  <div class="spm">🎥 Add Video</div>
+
+                <!-- View 2: Report details -->
+                <div id="sec-view-report" class="sec-view hidden">
+                  <div class="spvp-hdr" style="margin-bottom:1rem"><div class="back" onclick="navSecView('loc')" style="cursor:pointer">‹</div><span>Report Issue</span><div class="anon-pill" style="cursor:pointer; transition:0.2s;" onclick="toggleAnonMockup()">Anon</div></div>
+                  <div class="spvp-loc" style="margin-bottom:1rem"><span class="spvp-dot"></span> <span id="secSelectedLocStr">Zone E4 · Seat 22</span></div>
+                  
+                  <div class="spvp-opts" style="margin-bottom:1rem">
+                    <div class="sopt r" onclick="selectSecType(this, 'Fight')">⚔️ Fight / Aggression</div>
+                    <div class="sopt y" onclick="selectSecType(this, 'Seat Dispute')">🪑 Seat Dispute</div>
+                    <div class="sopt o" onclick="selectSecType(this, 'Harassment')">🚨 Harassment</div>
+                    <div class="sopt b" onclick="selectSecType(this, 'Medical')">🏥 Medical Emergency</div>
+                  </div>
+                  
+                  <div class="spvp-media" style="margin-bottom:1rem">
+                    <div class="spm" onclick="toggleSecMedia(this, 'Photo')">📸 Add Photo</div>
+                    <div class="spm" onclick="toggleSecMedia(this, 'Video')">🎥 Add Video</div>
+                  </div>
+                  
+                  <div class="spvp-submit" style="margin-top:auto" onclick="submitSecReport()">🆘 Send Report Now</div>
                 </div>
-                <div class="spvp-submit">🆘 Send Report Now</div>
+
+                <!-- View 3: Monitor -->
+                <div id="sec-view-monitor" class="sec-view hidden">
+                  <div class="spvp-hdr" style="margin-bottom:1rem"><span style="margin:auto">Live Updates</span></div>
+                  <div class="spvp-body" style="padding-top:1rem; flex:1">
+                    <div style="text-align:center;margin-bottom:1.5rem">
+                      <div style="font-size:3.5rem;margin-bottom:0.5rem">🛡️</div>
+                      <h3 style="color:white;margin-bottom:0.25rem;font-size:1.2rem">Report Sent</h3>
+                      <p style="color:rgba(255,255,255,0.5);font-size:0.8rem;line-height:1.4">Staff assigned and heading to<br><strong id="secTrackLoc" style="color:white">Zone E</strong></p>
+                    </div>
+                    
+                    <div class="status-timeline">
+                      <div class="st-step active"><span>✓</span> <div><strong style="display:block;margin-bottom:0.2rem">Issue Logged</strong><div style="font-size:0.75rem;color:rgba(255,255,255,0.4)">Just now</div></div></div>
+                      <div class="st-step" id="secTrackAssign"><span>🏃</span> <div><strong style="display:block;margin-bottom:0.2rem">Staff Dispatched</strong><div style="font-size:0.75rem;color:rgba(255,255,255,0.4)">Waiting for assignment...</div></div></div>
+                      <div class="st-step" id="secTrackArrive"><span>📍</span> <div><strong style="display:block;margin-bottom:0.2rem">On Scene</strong><div style="font-size:0.75rem;color:rgba(255,255,255,0.4)">Resolving issue</div></div></div>
+                    </div>
+                    
+                    <div class="spvp-submit" style="background:rgba(255,255,255,0.08);color:white;margin-top:auto;padding:0.8rem;" onclick="navSecView('loc')">Report Another Issue</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -356,5 +423,110 @@
   </footer>
 
   <script src="script.js"></script>
+  <script>
+    // Security Tabs Logic
+    const secTabs = document.querySelectorAll('.sec-tab');
+    const secPanels = document.querySelectorAll('.sec-panel');
+    secTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        secTabs.forEach(t => t.classList.remove('active'));
+        secPanels.forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.querySelector(`.sec-panel[data-panel="${tab.dataset.tab}"]`).classList.add('active');
+      });
+    });
+
+    // Security Phone Mockup Flow
+    let secSelectedLocation = '';
+    let secSelectedIssue = '';
+    let secIsAnon = false;
+    
+    function toggleAnonMockup() {
+      secIsAnon = !secIsAnon;
+      const pills = document.querySelectorAll('.spv-phone .anon-pill');
+      pills.forEach(pill => {
+        pill.textContent = secIsAnon ? '✓ Anon' : 'Anon';
+        pill.style.background = secIsAnon ? 'rgba(34,197,94,0.2)' : 'rgba(79,142,247,0.2)';
+        pill.style.borderColor = secIsAnon ? 'rgba(34,197,94,0.4)' : 'rgba(79,142,247,0.3)';
+        pill.style.color = secIsAnon ? '#22c55e' : '#4f8ef7';
+      });
+      // Optionally sync with the global toast if script.js is loaded
+      if(typeof toast === 'function') toast(secIsAnon ? '🎭 Anonymous mode ON' : '👤 Anonymous mode OFF');
+    }
+    
+    function useSecCurrentLoc(btn) {
+      document.getElementById('cloc-icon').textContent = '⏳';
+      document.getElementById('cloc-text').textContent = 'Locating...';
+      btn.style.opacity = '0.7';
+      setTimeout(() => {
+        document.getElementById('cloc-icon').textContent = '📍';
+        document.getElementById('cloc-text').textContent = 'My Current Location (Auto-detect)';
+        btn.style.opacity = '1';
+        selectSecLoc('Zone F2 · Seat 18 (Auto-detected)');
+      }, 800);
+    }
+    
+    function selectSecLoc(loc) {
+      secSelectedLocation = loc;
+      document.getElementById('secSelectedLocStr').textContent = loc;
+      document.getElementById('secTrackLoc').textContent = loc;
+      navSecView('report');
+    }
+
+    function selectSecType(el, type) {
+      document.querySelectorAll('.sopt').forEach(opt => opt.classList.remove('selected'));
+      el.classList.add('selected');
+      secSelectedIssue = type;
+    }
+
+    function toggleSecMedia(el, type) {
+      el.classList.toggle('selected');
+      if(el.classList.contains('selected')) {
+        el.innerHTML = "✅ " + type + " Attached";
+      } else {
+        el.innerHTML = (type === 'Photo' ? "📸 Add Photo" : "🎥 Add Video");
+      }
+    }
+
+    function submitSecReport() {
+      if(!secSelectedIssue) {
+        alert("Please select the type of incident first.");
+        return;
+      }
+      navSecView('monitor');
+      
+      // Live Tracking Simulation
+      setTimeout(() => {
+        const assign = document.getElementById('secTrackAssign');
+        assign.classList.add('active');
+        assign.querySelector('div div').textContent = 'Officer Kumar · ETA 1 min';
+      }, 1500);
+      
+      setTimeout(() => {
+        const arrive = document.getElementById('secTrackArrive');
+        arrive.classList.add('active');
+        arrive.querySelector('div div').textContent = 'Staff has arrived';
+      }, 4000);
+    }
+
+    function navSecView(viewId) {
+      document.querySelectorAll('.sec-view').forEach(v => v.classList.add('hidden'));
+      document.getElementById('sec-view-' + viewId).classList.remove('hidden');
+      
+      // Reset state if heading back to loc
+      if(viewId === 'loc') {
+        secSelectedIssue = '';
+        document.querySelectorAll('.sopt').forEach(opt => opt.classList.remove('selected'));
+        document.querySelectorAll('.spm').forEach(opt => {
+          opt.classList.remove('selected');
+          opt.innerHTML = opt.innerHTML.includes('Photo') || opt.innerHTML.includes('📸') ? "📸 Add Photo" : "🎥 Add Video";
+        });
+        document.getElementById('secTrackAssign').classList.remove('active');
+        document.getElementById('secTrackArrive').classList.remove('active');
+        document.getElementById('secTrackAssign').querySelector('div div').textContent = 'Waiting for assignment...';
+        document.getElementById('secTrackArrive').querySelector('div div').textContent = 'Resolving issue';
+      }
+    }
+  </script>
 </body>
 </html>

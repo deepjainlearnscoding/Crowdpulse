@@ -46,6 +46,77 @@
       .food-layout { grid-template-columns: 1fr; }
       .food-features { grid-template-columns: 1fr; }
     }
+
+    /* Checklist & Cart Modal CSS */
+    .sticky-cart { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(34,197,94,0.5); border-radius: 100px; padding: 0.75rem 1.25rem; display: flex; align-items: center; gap: 2rem; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(34,197,94,0.2); backdrop-filter: blur(10px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .sticky-cart.hidden { bottom: -5rem; opacity: 0; pointer-events: none; transform: translateX(-50%) scale(0.9); }
+    .cart-info { display: flex; align-items: center; gap: 1rem; color: white; font-weight: 500; }
+    .cart-info strong { color: #4ade80; font-size: 1.1rem; }
+    .checkout-btn { background: #4ade80; color: #0f172a; padding: 0.6rem 1.5rem; border-radius: 100px; border: none; font-weight: 700; cursor: pointer; transition: 0.2s; font-family: 'Outfit', sans-serif; cursor: pointer; }
+    .checkout-btn:hover { background: #22c55e; transform: translateY(-2px); }
+
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px); opacity: 1; transition: opacity 0.3s; }
+    .modal-overlay.hidden { opacity: 0; pointer-events: none; }
+    .modal-overlay.hidden .modal { transform: scale(0.95) translateY(20px); opacity: 0; }
+    .modal { background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; width: 90%; max-width: 450px; padding: 2rem; box-shadow: 0 20px 50px rgba(0,0,0,0.7); position: relative; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .step { transition: opacity 0.3s; animation: fadeIn 0.4s ease forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .step.hidden { display: none; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; color: white; }
+    .modal-header h3 { margin: 0; font-size: 1.5rem; font-weight: 800; }
+    .close-modal { background: rgba(255,255,255,0.1); border: none; color: rgba(255,255,255,0.8); width: 36px; height: 36px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .close-modal:hover { background: rgba(255,255,255,0.2); }
+    .cart-items { max-height: 250px; overflow-y: auto; margin-bottom: 1.5rem; padding-right: 0.5rem; }
+    .cart-items::-webkit-scrollbar { width: 6px; }
+    .cart-items::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+    .c-item { display: flex; justify-content: space-between; align-items: center; padding: 1rem 0; border-bottom: 1px dashed rgba(255,255,255,0.1); color: white; }
+    .c-item-name { font-weight: 600; }
+    .c-item-price { color: #4ade80; font-weight: 700; }
+    .modal-total { display: flex; justify-content: space-between; font-size: 1.25rem; color: white; font-weight: 800; margin-bottom: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; }
+    .modal-total strong { color: #4ade80; }
+    .modal-btn { width: 100%; background: #4ade80; color: #0f172a; padding: 1rem; border-radius: 14px; border: none; font-weight: 800; font-size: 1.1rem; font-family: 'Outfit', sans-serif; cursor: pointer; transition: 0.2s; }
+    .modal-btn:hover { background: #22c55e; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(34,197,94,0.3); }
+    .modal-btn.sec { background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); }
+    .modal-btn.sec:hover { background: rgba(255,255,255,0.1); box-shadow: none; }
+    .modal-actions { display: flex; gap: 1rem; }
+    .pickup-details label { color: rgba(255,255,255,0.6); display: block; margin-bottom: 0.5rem; margin-top: 1.2rem; font-size: 0.9rem; }
+    .pickup-details select { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 1rem; border-radius: 12px; font-family: 'Outfit', sans-serif; outline: none; margin-bottom: 0.5rem; cursor: pointer; transition: border-color 0.2s; }
+    .pickup-details select:hover, .pickup-details select:focus { border-color: rgba(34,197,94,0.5); }
+    .pickup-details select option { background: #0f172a; color: white; }
+    .success-icon { font-size: 4.5rem; text-align: center; margin-bottom: 1rem; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    @keyframes popIn { 0% { opacity: 0; transform: scale(0.5); } 100% { opacity: 1; transform: scale(1); } }
+    .text-center { text-align: center; }
+    .tracking-timeline { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2.5rem; text-align: left; background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 16px; position: relative; }
+    .tracking-timeline::before { content: ''; position: absolute; left: 33px; top: 30px; bottom: 30px; width: 2px; background: rgba(255,255,255,0.1); }
+    .track-step { display: flex; align-items: center; gap: 1.2rem; color: rgba(255,255,255,0.4); position: relative; z-index: 2; transition: all 0.3s; }
+    .track-step.active { color: white; font-weight: 700; transform: scale(1.05); transform-origin: left; }
+    .track-step span { width: 36px; height: 36px; background: #0f172a; border: 2px solid rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: all 0.3s; box-shadow: 0 0 0 4px #0f172a; }
+    .track-step.active span { background: #4ade80; border-color: #4ade80; color: #0f172a; box-shadow: 0 0 15px rgba(34,197,94,0.4), 0 0 0 4px #0f172a; }
+
+    /* Phone Mockup Specific CSS */
+    .phone-screen { position: relative; overflow: hidden; }
+    .mockup-view { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; transition: transform 0.3s ease; background: #0f172a; border-radius: 24px; }
+    .mockup-view.hidden { transform: translateX(100%); pointer-events: none; }
+    #mockup-stalls.hidden { transform: translateX(-100%); }
+    .mockup-body { flex: 1; overflow-y: auto; overflow-x: hidden; }
+    .stall-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 1rem; margin: 0.8rem; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
+    .stall-card:hover { background: rgba(255,255,255,0.1); border-color: rgba(34,197,94,0.4); }
+    .st-info strong { display: block; color: white; font-size: 0.95rem; margin-bottom: 0.2rem; }
+    .st-info small { color: rgba(255,255,255,0.6); font-size: 0.8rem; }
+    .st-info small.fast { color: #4ade80; }
+
+    .mc-overlay { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 10; display: flex; flex-direction: column; justify-content: flex-end; transition: opacity 0.3s; border-radius: 24px; overflow: hidden; }
+    .mc-overlay.hidden { opacity: 0; pointer-events: none; }
+    .mc-panel { background: #1e293b; border-radius: 20px 20px 24px 24px; border-top: 1px solid rgba(34,197,94,0.3); max-height: 80%; display: flex; flex-direction: column; transform: translateY(0); transition: transform 0.3s; }
+    .mc-overlay.hidden .mc-panel { transform: translateY(100%); }
+    .mc-hdr { padding: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; color: white; font-weight: bold; }
+    .mc-items { overflow-y: auto; padding: 1rem; flex: 1; }
+    .mc-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; color: white; font-size: 0.9rem; }
+    .mc-item-act { display: flex; gap: 0.5rem; align-items: center; }
+    .mc-btn { background: rgba(255, 255, 255, 0.1); border: none; color: white; border-radius: 4px; padding: 0.2rem 0.6rem; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+    .mc-btn:hover { background: rgba(255, 255, 255, 0.2); }
+    .mc-btn.rem { color: #ef4444; background: rgba(239, 68, 68, 0.15); font-weight: bold; }
+    .mc-footer { padding: 1rem; border-top: 1px solid rgba(255,255,255,0.1); }
   </style>
 </head>
 <body>
@@ -65,7 +136,10 @@
       <li><a href="medical.html">Medical</a></li>
       <li><a href="safety-map.html">Safety Map</a></li>
     </ul>
-    <a href="auth.html" class="nav-cta">Sign In</a>
+    <div class="nav-actions" style="display:flex;align-items:center;gap:.6rem;flex-shrink:0">
+      <a href="index.html" style="padding:.45rem .9rem;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);border-radius:8px;color:rgba(255,255,255,.8);text-decoration:none;font-size:.85rem;font-weight:500;transition:all .2s" onmouseover="this.style.background='rgba(255,255,255,.12)'" onmouseout="this.style.background='rgba(255,255,255,.07)'">Sign In</a>
+      <a href="index.html?mode=signup" class="nav-cta">Get Started</a>
+    </div>
     <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
   </nav>
 
@@ -107,16 +181,46 @@
         <div style="display:flex;justify-content:center">
           <div style="width:220px">
             <div class="phone-frame" style="border-radius:30px">
-              <div class="phone-screen food-screen" style="border-radius:24px">
-                <div class="s-hdr"><div class="back">‹</div><span>Order Food</span><div class="cart">🛒</div></div>
-                <div class="food-list">
-                  <div class="fi"><span class="fe">🍕</span><div class="finfo"><strong>Pizza Slice</strong><small>Pickup 18:45 · Stall 4</small></div><button class="fab">+</button></div>
-                  <div class="fi"><span class="fe">🍟</span><div class="finfo"><strong>Fries Large</strong><small>Pickup 18:45 · Stall 2</small></div><button class="fab">+</button></div>
-                  <div class="fi fi-done"><span class="fe">🥤</span><div class="finfo"><strong>Cola 500ml</strong><small>✓ Added to order</small></div><button class="fab done">✓</button></div>
-                  <div class="fi"><span class="fe">🌮</span><div class="finfo"><strong>Taco Combo</strong><small>Pickup 19:00 · Stall 7</small></div><button class="fab">+</button></div>
-                  <div class="stall-tip">💡 Stall 6 near you — zero queue!</div>
+              <div class="phone-screen food-screen" style="border-radius:24px; position:relative;">
+                
+                <!-- Mockup Stalls List -->
+                <div id="mockup-stalls" class="mockup-view">
+                  <div class="s-hdr"><div class="back" style="visibility:hidden">‹</div><span>Select Stall</span><div class="cart" style="position:relative;cursor:pointer;" onclick="toggleMockupCart()">🛒<span id="mCartBadge" style="position:absolute;top:-2px;right:-5px;background:#ef4444;border-radius:50%;width:16px;height:16px;font-size:10px;line-height:16px;text-align:center;display:none;color:white;font-weight:bold;">0</span></div></div>
+                  <div class="mockup-body" style="padding: 0;">
+                    <div class="stall-card" onclick="openMockupStall(4, 'Pizza & Italian')">
+                      <div class="st-info"><strong>Stall 4: Pizza & Italian</strong><small class="fast">💡 0 min wait (Fastest)</small></div>
+                      <div style="color:rgba(255,255,255,0.3)">›</div>
+                    </div>
+                    <div class="stall-card" onclick="openMockupStall(2, 'Burgers & Fries')">
+                      <div class="st-info"><strong>Stall 2: Burgers & Fries</strong><small>🕒 3 min wait</small></div>
+                      <div style="color:rgba(255,255,255,0.3)">›</div>
+                    </div>
+                    <div class="stall-card" onclick="openMockupStall(7, 'Mexican / Tacos')">
+                      <div class="st-info"><strong>Stall 7: Mexican / Tacos</strong><small>🕒 5 min wait</small></div>
+                      <div style="color:rgba(255,255,255,0.3)">›</div>
+                    </div>
+                  </div>
                 </div>
-                <div class="order-bar"><div class="oi">1 item · <strong>₹180</strong></div><button class="checkout">Checkout</button></div>
+
+                <!-- Mockup Menu Screen -->
+                <div id="mockup-menu" class="mockup-view hidden">
+                  <div class="s-hdr"><div class="back" onclick="showMockupStalls()">‹</div><span id="mStallName">Menu</span><div class="cart" onclick="toggleMockupCart()">🛒</div></div>
+                  <div class="food-list mockup-body" id="mFoodList" style="padding:0;">
+                     <!-- Injected items -->
+                  </div>
+                  <div class="order-bar"><div class="oi"><span id="mockupItemCount">0 items</span> · <strong id="mockupTotalVal">₹0</strong></div><button class="checkout" onclick="openModal()">Checkout</button></div>
+                </div>
+
+                <!-- Mockup Mini Cart Overlay -->
+                <div id="mockup-cart-overlay" class="mc-overlay hidden">
+                  <div class="mc-panel">
+                     <div class="mc-hdr"><span>Your Cart</span><span style="font-size:1.5rem;cursor:pointer;line-height:1;" onclick="toggleMockupCart()">×</span></div>
+                     <div class="mc-items" id="mCartItems"></div>
+                     <div class="mc-footer">
+                        <button class="modal-btn" onclick="openModal()" style="font-size:0.9rem;padding:0.75rem;">Checkout (₹<span id="mCartTotalStr">0</span>)</button>
+                     </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -134,17 +238,91 @@
         <p>Sample menu — try adding items to your cart below (UI demo).</p>
       </div>
       <div class="menu-grid" id="menuGrid">
-        <div class="menu-item"><span class="menu-item-emoji">🍕</span><h5>Pizza Slice</h5><div class="price">₹120</div><div class="wait">Stall 4 · 3 min wait</div><button class="add-btn" onclick="addToCart(this,'Pizza Slice')">Add to Cart</button></div>
-        <div class="menu-item"><span class="menu-item-emoji">🍟</span><h5>Fries Large</h5><div class="price">₹80</div><div class="wait">Stall 2 · 1 min wait</div><button class="add-btn" onclick="addToCart(this,'Fries Large')">Add to Cart</button></div>
-        <div class="menu-item"><span class="menu-item-emoji">🥤</span><h5>Cola 500ml</h5><div class="price">₹60</div><div class="wait">Stall 6 · 0 min wait 💡</div><button class="add-btn" onclick="addToCart(this,'Cola')">Add to Cart</button></div>
-        <div class="menu-item"><span class="menu-item-emoji">🌮</span><h5>Taco Combo</h5><div class="price">₹150</div><div class="wait">Stall 7 · 5 min wait</div><button class="add-btn" onclick="addToCart(this,'Taco Combo')">Add to Cart</button></div>
-        <div class="menu-item"><span class="menu-item-emoji">🍔</span><h5>Burger Meal</h5><div class="price">₹180</div><div class="wait">Stall 3 · 4 min wait</div><button class="add-btn" onclick="addToCart(this,'Burger')">Add to Cart</button></div>
-        <div class="menu-item"><span class="menu-item-emoji">🧃</span><h5>Fresh Juice</h5><div class="price">₹90</div><div class="wait">Stall 1 · 2 min wait</div><button class="add-btn" onclick="addToCart(this,'Juice')">Add to Cart</button></div>
-        <div class="menu-item"><span class="menu-item-emoji">🍦</span><h5>Ice Cream</h5><div class="price">₹70</div><div class="wait">Stall 5 · 1 min wait</div><button class="add-btn" onclick="addToCart(this,'Ice Cream')">Add to Cart</button></div>
-        <div class="menu-item"><span class="menu-item-emoji">☕</span><h5>Hot Coffee</h5><div class="price">₹65</div><div class="wait">Stall 8 · 0 min wait 💡</div><button class="add-btn" onclick="addToCart(this,'Coffee')">Add to Cart</button></div>
+        <div class="menu-item"><span class="menu-item-emoji">🍕</span><h5>Pizza Slice</h5><div class="price">₹120</div><div class="wait">Stall 4 · 3 min wait</div><button class="add-btn" onclick="addToCart(this,'Pizza Slice', 120)">Add to Cart</button></div>
+        <div class="menu-item"><span class="menu-item-emoji">🍟</span><h5>Fries Large</h5><div class="price">₹80</div><div class="wait">Stall 2 · 1 min wait</div><button class="add-btn" onclick="addToCart(this,'Fries Large', 80)">Add to Cart</button></div>
+        <div class="menu-item"><span class="menu-item-emoji">🥤</span><h5>Cola 500ml</h5><div class="price">₹60</div><div class="wait">Stall 6 · 0 min wait 💡</div><button class="add-btn" onclick="addToCart(this,'Cola', 60)">Add to Cart</button></div>
+        <div class="menu-item"><span class="menu-item-emoji">🌮</span><h5>Taco Combo</h5><div class="price">₹150</div><div class="wait">Stall 7 · 5 min wait</div><button class="add-btn" onclick="addToCart(this,'Taco Combo', 150)">Add to Cart</button></div>
+        <div class="menu-item"><span class="menu-item-emoji">🍔</span><h5>Burger Meal</h5><div class="price">₹180</div><div class="wait">Stall 3 · 4 min wait</div><button class="add-btn" onclick="addToCart(this,'Burger', 180)">Add to Cart</button></div>
+        <div class="menu-item"><span class="menu-item-emoji">🧃</span><h5>Fresh Juice</h5><div class="price">₹90</div><div class="wait">Stall 1 · 2 min wait</div><button class="add-btn" onclick="addToCart(this,'Juice', 90)">Add to Cart</button></div>
+        <div class="menu-item"><span class="menu-item-emoji">🍦</span><h5>Ice Cream</h5><div class="price">₹70</div><div class="wait">Stall 5 · 1 min wait</div><button class="add-btn" onclick="addToCart(this,'Ice Cream', 70)">Add to Cart</button></div>
+        <div class="menu-item"><span class="menu-item-emoji">☕</span><h5>Hot Coffee</h5><div class="price">₹65</div><div class="wait">Stall 8 · 0 min wait 💡</div><button class="add-btn" onclick="addToCart(this,'Coffee', 65)">Add to Cart</button></div>
       </div>
     </div>
   </section>
+
+  <!-- CART STICKY BAR -->
+  <div id="stickyCart" class="sticky-cart hidden">
+    <div class="cart-info">
+      <span style="font-size: 1.5rem">🛒</span>
+      <span id="cartCount">0 items</span>
+      <strong id="cartTotal">₹0</strong>
+    </div>
+    <button id="checkoutBtn" class="checkout-btn">Checkout</button>
+  </div>
+
+  <!-- CHECKOUT MODAL -->
+  <div id="checkoutModal" class="modal-overlay hidden">
+    <div class="modal">
+      <!-- Step 1: Cart Review -->
+      <div id="step-cart" class="step">
+        <div class="modal-header">
+          <h3>Your Order</h3>
+          <button class="close-modal">×</button>
+        </div>
+        <div id="cartItemsList" class="cart-items">
+          <!-- items injected here -->
+        </div>
+        <div class="modal-total">
+          <span>Total</span> <strong id="modalTotalStr">₹0</strong>
+        </div>
+        <button class="modal-btn" onclick="nextStep(2)">Proceed to Pickup Details</button>
+      </div>
+
+      <!-- Step 2: Pickup Details -->
+      <div id="step-pickup" class="step hidden">
+        <div class="modal-header">
+          <h3>Pickup Details</h3>
+          <button class="close-modal">×</button>
+        </div>
+        <div class="pickup-details">
+          <div class="stall-tip" style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); padding: 1rem; border-radius: 12px; margin-bottom: 1rem; margin-top: 0;">
+            💡 AI suggests <strong>Stall 4</strong> <br><small style="color: rgba(255,255,255,0.7);">(0 min wait, 2 mins walk from your seat)</small>
+          </div>
+          <label>Select Stall:</label>
+          <select class="stall-select">
+            <option>Stall 4 (Recommended - Fastest)</option>
+            <option>Stall 2 (5 mins walk)</option>
+            <option>Stall 6 (7 mins walk)</option>
+          </select>
+          <label>Pickup Time:</label>
+          <select class="time-select">
+            <option>ASAP (Ready in ~4 mins)</option>
+            <option>Halftime (Ready in 45 mins)</option>
+            <option>Post-match</option>
+          </select>
+        </div>
+        <div class="modal-actions" style="margin-top: 1.5rem;">
+          <button class="modal-btn sec" onclick="prevStep(1)" style="flex: 0.5;">Back</button>
+          <button class="modal-btn" onclick="nextStep(3)" style="flex: 1;">Confirm & Pay</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Success & Tracking -->
+      <div id="step-track" class="step hidden text-center">
+        <div class="success-icon">🏟️</div>
+        <h3 style="margin-bottom: 0.5rem; font-size: 1.8rem; font-weight: 800; color: white;">Order Confirmed!</h3>
+        <p style="color: rgba(255,255,255,0.6); margin-bottom: 2rem">Your order has been sent to <strong>Stall 4</strong>. Please head there during your pickup window.</p>
+        
+        <div class="tracking-timeline">
+          <div class="track-step active"><span>📝</span> Received</div>
+          <div class="track-step" id="trackPrep"><span>🔥</span> Preparing</div>
+          <div class="track-step" id="trackReady"><span>🛍️</span> Ready for Pickup</div>
+        </div>
+
+        <button class="modal-btn sec" onclick="closeModal()">Close Tracker</button>
+      </div>
+    </div>
+  </div>
 
   <!-- FOOTER -->
   <footer id="footer">
@@ -166,11 +344,218 @@
   <script src="script.js"></script>
   <script>
     let cart = [];
-    function addToCart(btn, item) {
-      cart.push(item);
-      btn.textContent = '✓ Added!';
-      btn.classList.add('added');
-      btn.disabled = true;
+    let cartTotal = 0;
+
+    const mStallsData = {
+      4: [
+        { name: 'Pizza Slice', price: 120, wait: '💡 0 min wait', emoji: '🍕' },
+        { name: 'Garlic Bread', price: 80, wait: '💡 0 min wait', emoji: '🥖' },
+        { name: 'Cola 500ml', price: 60, wait: '💡 0 min wait', emoji: '🥤' }
+      ],
+      2: [
+        { name: 'Fries Large', price: 80, wait: '🕒 1 min wait', emoji: '🍟' },
+        { name: 'Burger Meal', price: 180, wait: '🕒 3 min wait', emoji: '🍔' },
+        { name: 'Milkshake', price: 100, wait: '🕒 2 min wait', emoji: '🥤' }
+      ],
+      7: [
+        { name: 'Taco Combo', price: 150, wait: '🕒 5 min wait', emoji: '🌮' },
+        { name: 'Nachos', price: 110, wait: '🕒 4 min wait', emoji: '🧀' }
+      ]
+    };
+
+    let currentMockupStall = null;
+
+    function openMockupStall(stallId, name) {
+      currentMockupStall = stallId;
+      document.getElementById('mStallName').textContent = 'Stall ' + stallId + ' Menu';
+      renderMockupStall(stallId);
+      document.getElementById('mockup-stalls').classList.add('hidden');
+      document.getElementById('mockup-menu').classList.remove('hidden');
+    }
+
+    function showMockupStalls() {
+      currentMockupStall = null;
+      document.getElementById('mockup-stalls').classList.remove('hidden');
+      document.getElementById('mockup-menu').classList.add('hidden');
+    }
+
+    function toggleMockupCart() {
+      const overlay = document.getElementById('mockup-cart-overlay');
+      if(overlay.classList.contains('hidden')) {
+        renderMockupCart();
+        overlay.classList.remove('hidden');
+      } else {
+        overlay.classList.add('hidden');
+      }
+    }
+
+    function toggleItemCart(name, price, add) {
+      if (add) {
+        cart.push({ item: name, price: price });
+        cartTotal += price;
+      } else {
+        const idx = cart.findIndex(c => c.item === name);
+        if(idx !== -1) {
+          cartTotal -= cart[idx].price;
+          cart.splice(idx, 1);
+        }
+      }
+      updateCartUI();
+      if(currentMockupStall) renderMockupStall(currentMockupStall);
+      renderMockupCart();
+    }
+
+    function renderMockupStall(stallId) {
+      const list = document.getElementById('mFoodList');
+      list.innerHTML = '';
+      if(!mStallsData[stallId]) return;
+      
+      mStallsData[stallId].forEach(f => {
+        const qty = cart.filter(c => c.item === f.name).length;
+        let btnHtml = `<button class="fab" onclick="toggleItemCart('${f.name}', ${f.price}, true)">+</button>`;
+        let fiClass = 'fi';
+        
+        if(qty > 0) {
+          fiClass = 'fi fi-done';
+          btnHtml = `<button class="fab" style="background:rgba(239, 68, 68, 0.15);color:#ef4444" onclick="toggleItemCart('${f.name}', ${f.price}, false)">-</button>
+                     <span style="margin:0 0.5rem;font-weight:bold;color:white;width:1rem;text-align:center;">${qty}</span>
+                     <button class="fab" onclick="toggleItemCart('${f.name}', ${f.price}, true)">+</button>`;
+        }
+        
+        list.innerHTML += `<div class="${fiClass}">
+          <span class="fe">${f.emoji}</span>
+          <div class="finfo" style="flex:1;"><strong>${f.name}</strong><small>${f.wait}</small></div>
+          <div style="display:flex;align-items:center;">${btnHtml}</div>
+        </div>`;
+      });
+    }
+
+    function renderMockupCart() {
+      const cList = document.getElementById('mCartItems');
+      cList.innerHTML = '';
+      
+      const grouped = {};
+      cart.forEach(c => {
+        if(!grouped[c.item]) grouped[c.item] = { price: c.price, qty: 0 };
+        grouped[c.item].qty++;
+      });
+      
+      let html = '';
+      for(let p in grouped) {
+        html += `<div class="mc-item">
+          <span>${p} (x${grouped[p].qty})</span>
+          <div class="mc-item-act">
+             <span>₹${grouped[p].price * grouped[p].qty}</span>
+             <button class="mc-btn rem" onclick="toggleItemCart('${p}', ${grouped[p].price}, false)">-</button>
+             <button class="mc-btn add" onclick="toggleItemCart('${p}', ${grouped[p].price}, true)">+</button>
+          </div>
+        </div>`;
+      }
+      if(cart.length===0) html = '<div style="color:rgba(255,255,255,0.4);text-align:center;padding:1rem;">Your Cart is empty</div>';
+      cList.innerHTML = html;
+      document.getElementById('mCartTotalStr').textContent = cartTotal;
+    }
+
+    // Adapt the previous addToCart method for the global external menu (since they lack - / qty UI)
+    function addToCart(btn, item, price) {
+      toggleItemCart(item, price, true);
+      if(btn) {
+        btn.textContent = '✓ Added!';
+        btn.classList.add('added');
+      }
+    }
+
+    function updateCartUI() {
+      const sticky = document.getElementById('stickyCart');
+      const badgeId = document.getElementById('mCartBadge');
+      
+      if(badgeId) {
+        if(cart.length > 0) {
+          badgeId.style.display = 'block';
+          badgeId.textContent = cart.length;
+        } else {
+          badgeId.style.display = 'none';
+        }
+      }
+
+      if(cart.length > 0) {
+        sticky.classList.remove('hidden');
+        const itemText = cart.length + (cart.length === 1 ? ' item' : ' items');
+        document.getElementById('cartCount').textContent = itemText;
+        document.getElementById('cartTotal').textContent = '₹' + cartTotal;
+
+        const mockupItemCount = document.getElementById('mockupItemCount');
+        const mockupTotalVal = document.getElementById('mockupTotalVal');
+        if (mockupItemCount) mockupItemCount.textContent = itemText;
+        if (mockupTotalVal) mockupTotalVal.textContent = '₹' + cartTotal;
+      } else {
+        sticky.classList.add('hidden');
+        const mockupItemCount = document.getElementById('mockupItemCount');
+        const mockupTotalVal = document.getElementById('mockupTotalVal');
+        if (mockupItemCount) mockupItemCount.textContent = '0 items';
+        if (mockupTotalVal) mockupTotalVal.textContent = '₹0';
+      }
+    }
+
+    const modal = document.getElementById('checkoutModal');
+    document.getElementById('checkoutBtn').addEventListener('click', () => {
+      openModal();
+    });
+
+    document.querySelectorAll('.close-modal').forEach(btn => {
+      btn.addEventListener('click', closeModal);
+    });
+
+    function openModal() {
+      modal.classList.remove('hidden');
+      renderCartItems();
+      showStep(1);
+    }
+
+    function closeModal() {
+      modal.classList.add('hidden');
+      // Reset tracking if closed
+      document.getElementById('trackPrep').classList.remove('active');
+      document.getElementById('trackReady').classList.remove('active');
+    }
+
+    function renderCartItems() {
+      const list = document.getElementById('cartItemsList');
+      list.innerHTML = '';
+      if(cart.length === 0) {
+        list.innerHTML = '<div class="c-item"><span class="c-item-name">No items yet</span></div>';
+      }
+      cart.forEach(c => {
+        list.innerHTML += `<div class="c-item">
+          <span class="c-item-name">${c.item}</span>
+          <span class="c-item-price">₹${c.price}</span>
+        </div>`;
+      });
+      document.getElementById('modalTotalStr').textContent = '₹' + cartTotal;
+    }
+
+    function showStep(step) {
+      document.querySelectorAll('.step').forEach(s => s.classList.add('hidden'));
+      if(step === 1) document.getElementById('step-cart').classList.remove('hidden');
+      if(step === 2) document.getElementById('step-pickup').classList.remove('hidden');
+      if(step === 3) {
+        document.getElementById('step-track').classList.remove('hidden');
+        // trigger animation
+        setTimeout(() => {
+          document.getElementById('trackPrep').classList.add('active');
+        }, 1500);
+        setTimeout(() => {
+          document.getElementById('trackReady').classList.add('active');
+        }, 3500);
+      }
+    }
+
+    function nextStep(step) {
+      showStep(step);
+    }
+
+    function prevStep(step) {
+      showStep(step);
     }
   </script>
 </body>
