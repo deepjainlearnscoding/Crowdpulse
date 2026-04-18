@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -120,8 +120,8 @@
         <span class="chip">🍔 Smart Ordering</span>
         <span class="chip">🚨 Emergency Routing</span>
       </div>
-      <div class="hero-cta">
-        <a href="index.html?mode=signup" class="btn-p">Get Started Free <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      <div class="hero-cta" id="heroCta">
+        <a href="index.html?mode=signup" id="heroSignupBtn" class="btn-p">Get Started Free <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
         <a href="#features" class="btn-s">Explore Features</a>
       </div>
     </div>
@@ -393,13 +393,13 @@
   </section>
 
   <!-- CTA BOTTOM -->
-  <section class="cta-banner">
+  <section class="cta-banner" id="ctaBanner">
     <div class="container">
-      <h2>Ready to <span class="gtext">Experience CrowdPulse?</span></h2>
-      <p>Create a free account or explore all features as a guest — no app download required.</p>
-      <div class="cta-row">
-        <a href="index.html?mode=signup" class="btn-p">Create Free Account <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        <a href="index.html" class="btn-s">Sign In</a>
+      <h2 id="ctaTitle">Ready to <span class="gtext">Experience CrowdPulse?</span></h2>
+      <p id="ctaSubtitle">Create a free account or explore all features as a guest — no app download required.</p>
+      <div class="cta-row" id="ctaRow">
+        <a href="index.html?mode=signup" class="btn-p" id="ctaSignupBtn">Create Free Account <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        <a href="index.html" class="btn-s" id="ctaSigninBtn">Sign In</a>
       </div>
     </div>
   </section>
@@ -423,5 +423,30 @@
 
   <!-- NOTIFICATION CENTER SCRIPT AND MAIN SCRIPT CACHE BUSTED -->
   <script src="script.js?v=3"></script>
+  <script src="auth-nav.js"></script>
+  <script>
+    /* Hide sign-in/sign-up CTAs when user is already authenticated */
+    (function updateHomeForAuthState() {
+      var isAuth = localStorage.getItem('crowdpulse_is_authenticated') === 'true';
+      if (!isAuth) return;
+
+      /* Hero: hide signup button, keep 'Explore Features' */
+      var heroBtn = document.getElementById('heroSignupBtn');
+      if (heroBtn) heroBtn.style.display = 'none';
+
+      /* Bottom CTA: swap buttons for a 'My Profile' link */
+      var ctaRow = document.getElementById('ctaRow');
+      var ctaSubtitle = document.getElementById('ctaSubtitle');
+      var ctaTitle = document.getElementById('ctaTitle');
+
+      if (ctaTitle) ctaTitle.innerHTML = 'Welcome back to <span class="gtext">CrowdPulse!</span>';
+      if (ctaSubtitle) ctaSubtitle.textContent = 'You are signed in. Jump straight into any feature below.';
+      if (ctaRow) {
+        ctaRow.innerHTML =
+          '<a href="profile.html" class="btn-p">My Profile →</a>' +
+          '<a href="#features" class="btn-s">Explore Features</a>';
+      }
+    }());
+  </script>
 </body>
 </html>

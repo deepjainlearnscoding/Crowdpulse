@@ -261,6 +261,8 @@
             <label for="si-password">Password</label>
             <input type="password" id="si-password" placeholder="Enter your password" required />
           </div>
+          <div id="si-email-err" style="color:#f87171;font-size:.8rem;margin-top:-.2rem;display:none;"></div>
+          <div id="si-pass-err"  style="color:#f87171;font-size:.8rem;margin-top:-.2rem;display:none;"></div>
           <div class="auth-field-row">
             <div class="auth-checkbox-row">
               <input type="checkbox" id="si-remember" />
@@ -269,6 +271,9 @@
             <a href="#" class="auth-forgot">Forgot password?</a>
           </div>
           <button type="submit" class="auth-submit" id="si-btn">Sign In →</button>
+          <p style="text-align:center;color:rgba(255,255,255,.38);font-size:.8rem;margin-top:.4rem">
+            New here? <a onclick="switchAuth('signup')" style="color:rgba(99,102,241,.9);font-weight:600;cursor:pointer">Create a free account first →</a>
+          </p>
         </form>
 
         <div class="auth-divider">or continue with</div>
@@ -344,9 +349,25 @@
       IS_AUTHENTICATED: 'crowdpulse_is_authenticated',
       REMEMBER_ME: 'crowdpulse_remember_me',
       REMEMBERED_EMAIL: 'crowdpulse_remembered_email',
+      ACCOUNTS: 'crowdpulse_accounts',
     };
 
-    // Check URL param
+    /* ── Account registry helpers ── */
+    function getAccounts() {
+      try { return JSON.parse(localStorage.getItem(AUTH_KEYS.ACCOUNTS) || '{}'); }
+      catch(e) { return {}; }
+    }
+    function saveAccounts(accounts) {
+      localStorage.setItem(AUTH_KEYS.ACCOUNTS, JSON.stringify(accounts));
+    }
+
+    /* ── If already authenticated, skip the auth page entirely ── */
+    (function maybeAutoRedirect() {
+      const isAuth = localStorage.getItem(AUTH_KEYS.IS_AUTHENTICATED) === 'true';
+      if (isAuth) { window.location.replace('home.html'); }
+    }());
+
+    // Check URL param for initial tab
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('mode') === 'signup') switchAuth('signup');
 
@@ -355,6 +376,8 @@
       const su = document.getElementById('signupSection');
       const siTab = document.getElementById('signinTab');
       const suTab = document.getElementById('signupTab');
+      clearFieldError('si-email-err');
+      clearFieldError('si-pass-err');
       if (mode === 'signup') {
         si.classList.add('hidden'); su.classList.remove('hidden');
         siTab.classList.remove('active'); suTab.classList.add('active');
@@ -364,102 +387,165 @@
       }
     }
 
-    function showToast(msg) {
+    function showToast(msg, isError) {
       const t = document.getElementById('authToast');
-      t.textContent = msg; t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 3500);
+      t.textContent = msg;
+      t.style.background = isError
+        ? 'rgba(239,68,68,0.18)'
+        : 'rgba(34,197,94,0.15)';
+      t.style.borderColor = isError
+        ? 'rgba(239,68,68,0.38)'
+        : 'rgba(34,197,94,0.3)';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 4000);
+    }
+
+    function setFieldError(id, msg) {
+      const el = document.getElementById(id);
+      if (el) { el.textContent = msg; el.style.display = 'block'; }
+    }
+    function clearFieldError(id) {
+      const el = document.getElementById(id);
+      if (el) { el.textContent = ''; el.style.display = 'none'; }
     }
 
     function redirectToHome() {
-      // replace avoids back-navigation returning to auth page after login
       window.location.replace('home.html');
-      // fallback in case replace is ignored in some embedded contexts
       setTimeout(() => { window.location.href = 'home.html'; }, 250);
     }
 
+    /* ── Sign In ── */
     function handleSignIn(e) {
       e.preventDefault();
-      const emailInput = document.getElementById('si-email');
+      clearFieldError('si-email-err');
+      clearFieldError('si-pass-err');
+
+      const emailInput    = document.getElementById('si-email');
+      const passInput     = document.getElementById('si-password');
       const rememberInput = document.getElementById('si-remember');
-      const email = (emailInput?.value || '').trim().toLowerCase();
-      const rememberMe = !!rememberInput?.checked;
-      const btn = document.getElementById('si-btn');
+      const email         = (emailInput?.value || '').trim().toLowerCase();
+      const password      = passInput?.value || '';
+      const rememberMe    = !!rememberInput?.checked;
+      const btn           = document.getElementById('si-btn');
+
+      const accounts = getAccounts();
+
+      /* Check if account exists */
+      if (!accounts[email]) {
+        setFieldError('si-email-err', '⚠️ No account found. Please sign up first.');
+        showToast('❌ No account found — please sign up first.', true);
+        return;
+      }
+
+      /* Check password */
+      if (accounts[email].password !== password) {
+        setFieldError('si-pass-err', '⚠️ Incorrect password.');
+        showToast('❌ Incorrect password. Please try again.', true);
+        return;
+      }
+
       btn.textContent = 'Signing in…'; btn.disabled = true;
       setTimeout(() => {
+        const user = accounts[email];
         localStorage.setItem(AUTH_KEYS.IS_AUTHENTICATED, 'true');
-        // Always store email so profile page can show it
-        if (email) localStorage.setItem(AUTH_KEYS.REMEMBERED_EMAIL, email);
-        if (rememberMe && email) {
+        localStorage.setItem(AUTH_KEYS.REMEMBERED_EMAIL, email);
+        if (user.name) localStorage.setItem('crowdpulse_user_name', user.name);
+        if (rememberMe) {
           localStorage.setItem(AUTH_KEYS.REMEMBER_ME, 'true');
         } else {
           localStorage.setItem(AUTH_KEYS.REMEMBER_ME, 'false');
         }
         if (!localStorage.getItem('crowdpulse_member_since')) {
-          localStorage.setItem('crowdpulse_member_since', new Date().toISOString());
+          localStorage.setItem('crowdpulse_member_since', user.since || new Date().toISOString());
         }
         btn.textContent = '✓ Welcome back!';
         btn.style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
         showToast('🎉 Signed in successfully! Redirecting…');
         setTimeout(redirectToHome, 1400);
-      }, 1200);
+      }, 900);
     }
 
+    /* ── Sign Up ── */
     function handleSignUp(e) {
       e.preventDefault();
-      const pw = document.getElementById('su-password').value;
-      const cf = document.getElementById('su-confirm').value;
-      if (pw !== cf) { showToast('❌ Passwords do not match.'); return; }
-      const nameInput = document.getElementById('su-name');
+      const pw    = document.getElementById('su-password').value;
+      const cf    = document.getElementById('su-confirm').value;
+
+      if (pw !== cf) {
+        showToast('❌ Passwords do not match.', true);
+        return;
+      }
+      if (pw.length < 8) {
+        showToast('❌ Password must be at least 8 characters.', true);
+        return;
+      }
+
+      const nameInput  = document.getElementById('su-name');
       const emailInput = document.getElementById('su-email');
-      const name = (nameInput?.value || '').trim();
-      const email = (emailInput?.value || '').trim().toLowerCase();
-      const btn = document.getElementById('su-btn');
+      const name       = (nameInput?.value || '').trim();
+      const email      = (emailInput?.value || '').trim().toLowerCase();
+      const btn        = document.getElementById('su-btn');
+
+      const accounts = getAccounts();
+      if (accounts[email]) {
+        showToast('⚠️ An account with this email already exists. Please sign in.', true);
+        setTimeout(() => switchAuth('signin'), 1500);
+        return;
+      }
+
       btn.textContent = 'Creating account…'; btn.disabled = true;
       setTimeout(() => {
+        const since = new Date().toISOString();
+        accounts[email] = { name, email, password: pw, since };
+        saveAccounts(accounts);
+
         localStorage.setItem(AUTH_KEYS.IS_AUTHENTICATED, 'true');
         if (name) localStorage.setItem('crowdpulse_user_name', name);
-        if (email) {
-          localStorage.setItem(AUTH_KEYS.REMEMBER_ME, 'true');
-          localStorage.setItem(AUTH_KEYS.REMEMBERED_EMAIL, email);
-        }
-        localStorage.setItem('crowdpulse_member_since', new Date().toISOString());
+        localStorage.setItem(AUTH_KEYS.REMEMBER_ME, 'true');
+        localStorage.setItem(AUTH_KEYS.REMEMBERED_EMAIL, email);
+        localStorage.setItem('crowdpulse_member_since', since);
+
         btn.textContent = '✓ Account created!';
         btn.style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
         showToast('🎉 Account created! Welcome to CrowdPulse!');
         setTimeout(redirectToHome, 1500);
-      }, 1400);
+      }, 1100);
     }
 
+    /* ── Social Login (registers & signs in) ── */
     function socialLogin(btn, provider) {
-      const orig = btn.innerHTML;
-      btn.textContent = `Connecting…`;
+      btn.textContent = 'Connecting…';
       setTimeout(() => {
+        const demoEmail = provider.toLowerCase() + '_user@crowdpulse.demo';
+        const demoName  = provider + ' User';
+        const accounts  = getAccounts();
+        if (!accounts[demoEmail]) {
+          accounts[demoEmail] = { name: demoName, email: demoEmail, password: '', since: new Date().toISOString() };
+          saveAccounts(accounts);
+        }
         localStorage.setItem(AUTH_KEYS.IS_AUTHENTICATED, 'true');
+        localStorage.setItem(AUTH_KEYS.REMEMBERED_EMAIL, demoEmail);
+        localStorage.setItem('crowdpulse_user_name', accounts[demoEmail].name);
+        localStorage.setItem(AUTH_KEYS.REMEMBER_ME, 'true');
+        localStorage.setItem('crowdpulse_member_since', accounts[demoEmail].since);
         btn.textContent = '✓ Connected!';
-        showToast(`🎉 Signed in with ${provider}!`);
+        showToast('🎉 Signed in with ' + provider + '!');
         setTimeout(redirectToHome, 1200);
       }, 1200);
     }
 
     function hydrateRememberedCredentials() {
-      const remember = localStorage.getItem(AUTH_KEYS.REMEMBER_ME) === 'true';
       const rememberedEmail = localStorage.getItem(AUTH_KEYS.REMEMBERED_EMAIL) || '';
-      const emailInput = document.getElementById('si-email');
-      const rememberInput = document.getElementById('si-remember');
+      const emailInput      = document.getElementById('si-email');
+      const rememberInput   = document.getElementById('si-remember');
+      const remember        = localStorage.getItem(AUTH_KEYS.REMEMBER_ME) === 'true';
       if (rememberInput) rememberInput.checked = remember;
       if (emailInput && remember && rememberedEmail) emailInput.value = rememberedEmail;
-    }
-
-    function maybeAutoLoginRememberedUser() {
-      const isAuthenticated = localStorage.getItem(AUTH_KEYS.IS_AUTHENTICATED) === 'true';
-      const remember = localStorage.getItem(AUTH_KEYS.REMEMBER_ME) === 'true';
-      if (isAuthenticated && remember) redirectToHome();
     }
 
     document.getElementById('signinForm')?.addEventListener('submit', handleSignIn);
     document.getElementById('signupForm')?.addEventListener('submit', handleSignUp);
     hydrateRememberedCredentials();
-    maybeAutoLoginRememberedUser();
   </script>
 </body>
 </html>
