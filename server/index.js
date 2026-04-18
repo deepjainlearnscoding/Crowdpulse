@@ -10,7 +10,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const app  = express();
 const PORT = process.env.PORT || 3001;
-const ROOT = path.join(__dirname, '..');
+const ROOT = path.join(__dirname, '../public');
 
 // ── Middleware ────────────────────────────────────
 app.use(cors());
