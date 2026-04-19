@@ -77,6 +77,9 @@
     }
     @keyframes moveDash { to { stroke-dashoffset: -11; } }
 
+    .phone-scroll-area::-webkit-scrollbar { width: 0px; background: transparent; }
+    .phone-scroll-area { overflow-y: auto; scrollbar-width: none; -ms-overflow-style: none; }
+
     @media (max-width: 768px) {
       .emer-grid { grid-template-columns: 1fr; }
       .emer-cards { grid-template-columns: 1fr; }
@@ -161,16 +164,16 @@
                   <span style="font-size:.7rem;color:#fca5a5;font-weight:700"><img src="assets/logo.png" alt="CrowdPulse" style="width:22px;height:22px;vertical-align:middle;object-fit:contain;border-radius:4px;"> CrowdPulse</span>
                   <span style="background:#ef4444;border-radius:999px;padding:.15rem .5rem;font-size:.6rem;color:white;font-weight:700;margin-left:auto">EMERGENCY</span>
                 </div>
-                <div style="padding:1rem;display:flex;flex-direction:column;flex:1;">
+                <div class="phone-scroll-area" style="padding:1rem;display:flex;flex-direction:column;flex:1;">
                   <div style="color:#fca5a5;font-size:.8rem;font-weight:800;margin-bottom:.2rem">🚨 EVACUATE NOW</div>
                   <div id="evac-status" style="color:rgba(255,255,255,.8);font-size:.7rem;margin-bottom:.75rem">Select your safest route:</div>
                   
                   <!-- mini evac map -->
-                  <div class="evac-map-container" style="background:#1a0808;border-radius:10px;padding:.75rem;position:relative;height:150px;margin-bottom:1rem;overflow:hidden;">
+                  <div class="evac-map-container" style="background:#1a0808;border-radius:10px;padding:.75rem;position:relative;height:150px;margin-bottom:1rem;overflow:hidden;flex-shrink:0;">
                     <!-- Static Zones -->
-                    <div style="position:absolute;top:10%;left:8%;width:30%;height:25%;background:rgba(239,68,68,.3);border:1px solid rgba(239,68,68,.4);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#fca5a5;font-weight:700;">DANGER</div>
-                    <div style="position:absolute;top:8%;right:8%;width:28%;height:22%;background:rgba(34,197,94,.2);border:1px solid rgba(34,197,94,.3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#4ade80;font-weight:700;">SAFE</div>
-                    <div style="position:absolute;bottom:10%;left:15%;width:32%;height:20%;background:rgba(34,197,94,.2);border:1px solid rgba(34,197,94,.3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#4ade80;font-weight:700;">SAFE</div>
+                    <div style="position:absolute;top:10%;left:8%;width:30%;height:25%;background:rgba(239,68,68,.3);border:1px solid rgba(239,68,68,.4);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#fca5a5;font-weight:700;">GATE 2</div>
+                    <div style="position:absolute;top:8%;right:8%;width:28%;height:22%;background:rgba(34,197,94,.2);border:1px solid rgba(34,197,94,.3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#4ade80;font-weight:700;">GATE 4</div>
+                    <div style="position:absolute;bottom:10%;left:15%;width:32%;height:20%;background:rgba(34,197,94,.2);border:1px solid rgba(34,197,94,.3);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#4ade80;font-weight:700;">GATE 6</div>
                     
                     <!-- SVG Path layer -->
                     <svg id="evac-path-svg" viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;">
