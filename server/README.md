@@ -1,138 +1,126 @@
-# StadiumIQ Backend
+# 🏟️ Crowdpulse — Smart Stadium Intelligence Platform
 
-Simple Node.js/Express REST API for the StadiumIQ incident management system.
-
-## Setup
-
-```bash
-cd server
-npm install
-npm run dev      # development (auto-restart)
-npm start        # production
-```
-
-Server runs on **http://localhost:3001** and also serves the StadiumIQ web UI from the same address.
+Crowdpulse is a **real-time crowd intelligence and stadium management platform** designed to enhance fan experience, improve safety, and enable smarter decision-making during live events.
 
 ---
 
-## API Endpoints
+## 🚀 Live Demo
 
-### API catalog (JSON)
-```
-GET /api/info
-```
+🔗 https://stadium-iq-v11f.vercel.app/home.html
 
 ---
 
-### 1. Fetch all incidents
-```
-GET /api/incidents
-```
-**Query params (all optional):**
-| Param | Example | Description |
-|---|---|---|
-| `status` | `pending` | Filter by status |
-| `severity` | `critical` | Filter by severity |
-| `type` | `medical` | Filter by incident type |
-| `zone` | `Zone A` | Filter by zone (partial match) |
-| `limit` | `10` | Max results to return |
+## 📌 Problem Statement
 
-**Example:**
-```
-GET /api/incidents?status=pending&severity=critical
-```
+Large stadiums often face challenges such as:
+
+* Overcrowding at entry/exit gates
+* Poor crowd distribution
+* Delayed emergency response
+* Lack of real-time insights for management
+
+These issues impact **fan experience, safety, and operational efficiency**.
 
 ---
 
-### 2. Fetch single incident
-```
-GET /api/incidents/:id
-```
+## 💡 Solution
+
+Crowdpulse provides a **data-driven dashboard** that helps:
+
+* Monitor crowd density in real-time
+* Identify congestion hotspots
+* Optimize gate usage
+* Improve emergency response coordination
 
 ---
 
-### 3. Report a new incident
-```
-POST /api/incidents
-Content-Type: application/json
-```
-**Body:**
-```json
-{
-  "type": "fight",
-  "zone": "Zone A",
-  "seat": "Row 12, Seat 4",
-  "description": "Two fans fighting near entrance",
-  "severity": "high",
-  "anonymous": false,
-  "reportedBy": "Fan App",
-  "location": { "lat": 28.6139, "lng": 77.2090 },
-  "media": []
-}
-```
-**Required:** `type`, `zone`
+## ✨ Key Features
 
-**Valid types:** `fight`, `harassment`, `seat_dispute`, `medical`, `crowd_clustering`, `other`
+* 📊 **Crowd Heatmap Visualization**
+  Visual representation of crowd density across the stadium
 
-**Valid severities:** `low`, `medium`, `high`, `critical`
+* 🚪 **Smart Gate Monitoring**
+  Track congestion levels at entry/exit points
+
+* ⏱️ **Real-Time Insights (Simulated)**
+  Dynamic updates to mimic live stadium data
+
+* 🧭 **User-Friendly Dashboard**
+  Clean UI for quick decision-making
+
+* 🎨 **Modern Frontend Design**
+  Built with a focus on usability and responsiveness
 
 ---
 
-### 4. Update incident status
-```
-PATCH /api/incidents/:id/status
-Content-Type: application/json
-```
-**Body:**
-```json
-{ "status": "responding" }
-```
-**Valid statuses:** `pending`, `responding`, `on_scene`, `resolved`, `dismissed`
+## 🛠️ Tech Stack
+
+* **Frontend:** HTML, CSS, JavaScript
+* **Deployment:** Vercel
+* **Version Control:** Git & GitHub
 
 ---
 
-### 5. Assign incident to staff
-```
-PATCH /api/incidents/:id/assign
-Content-Type: application/json
-```
-**Body:**
-```json
-{ "assignedTo": "Officer Kumar" }
-```
+## 🧠 How It Works
+
+1. Simulated data represents crowd movement inside a stadium
+2. Data is visualized through heatmaps and UI components
+3. Users can analyze congestion and optimize flow
+4. The interface mimics a real-time monitoring system
 
 ---
 
-### 6. Dismiss/delete an incident
-```
-DELETE /api/incidents/:id
-```
+## 📷 Screenshots
+
+*(Add screenshots here for better presentation)*
 
 ---
 
-### 7. Dashboard summary
-```
-GET /api/summary
-```
-Returns counts by status, severity, and type.
+## 🎯 Use Cases
+
+* Sports stadiums
+* Concert venues
+* Large-scale public events
+* Smart city crowd management
 
 ---
 
-## Response format
+## 🚧 Future Improvements
 
-All responses follow this shape:
-```json
-{
-  "success": true,
-  "message": "...",
-  "data": { ... }
-}
-```
+* 🔴 Real-time IoT / sensor integration
+* 🤖 AI-based crowd prediction
+* 📱 Mobile app support
+* 🚑 Emergency alert system
+* 📡 Live API integration
 
 ---
 
-## Notes
-- Uses in-memory store — data resets on server restart
-- Seeded with 3 sample incidents on startup
-- No database required for development/demo
-- Swap `let incidents = []` with MongoDB/PostgreSQL for production
+## 🏆 Hackathon Vision
+
+CrowdPulse is built as a **hackathon-ready prototype** demonstrating how technology can:
+
+* Enhance stadium safety
+* Improve crowd flow
+* Deliver better fan experiences
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome!
+Feel free to fork the repo and submit a pull request.
+
+---
+
+## 📬 Contact
+
+**Deep Sand**
+GitHub: https://github.com/deepjainlearnscoding
+
+---
+
+## ⭐ Support
+
+If you like this project, consider giving it a **star ⭐** on GitHub!
+
+---
