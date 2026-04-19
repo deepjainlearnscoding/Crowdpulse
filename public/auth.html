@@ -249,7 +249,7 @@
     <!-- ── Right Form Panel ── -->
     <div class="auth-form-panel">
       <div style="display: flex; justify-content: flex-end; width: 100%;">
-        <a href="index.html" class="auth-back-link" style="margin-bottom: 2rem;">Skip / Continue as guest →</a>
+        <a href="#" onclick="guestLogin(event)" class="auth-back-link" style="margin-bottom: 2rem;">Skip / Continue as guest →</a>
       </div>
       <!-- Toggle tabs -->
       <div class="auth-toggle">
@@ -440,6 +440,16 @@
     }
 
     /* ── Sign In ── */
+    
+    function guestLogin(e) {
+      if(e) e.preventDefault();
+      localStorage.setItem('crowdpulse_is_authenticated', 'true');
+      localStorage.setItem('crowdpulse_user_name', 'Guest User');
+      localStorage.setItem('crowdpulse_remember_me', 'false');
+      window.location.replace('navigation.html');
+      setTimeout(() => { window.location.href = 'navigation.html'; }, 250);
+    }
+
     function handleSignIn(e) {
       e.preventDefault();
       clearFieldError('si-email-err');
