@@ -1,34 +1,72 @@
 // js/firebase.js
-// Simulates a Firebase Realtime Database Stream
+// Firebase V9 Integration & Setup
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+// TODO: Replace this config with your actual Firebase Project keys from the Firebase Console!
+// Refer to the step-by-step guide provided for instructions.
+const firebaseConfig = {
+    apiKey: "AIzaSyC3-sdajkzX1q89z-sqnptBbWQ5DuusH0s",
+    authDomain: "crowdpulse-f2ff0.firebaseapp.com",
+    projectId: "crowdpulse-f2ff0",
+    storageBucket: "crowdpulse-f2ff0.firebasestorage.app",
+    messagingSenderId: "108417955219",
+    appId: "1:108417955219:web:67c4bea7f2fec5abaf6466"
+};
+
+// Initialize Firebase App
+let app, auth, db;
+try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    console.log("[Firebase] Successfully Initialized Official Core APIs.");
+} catch (error) {
+    console.error("[Firebase] Initialization Failed. Did you setup your API keys?", error);
+}
+
+// ── Export Firebase Globally ──
+window.CrowdPulseApp = app;
+window.CrowdPulseAuth = auth;
+window.CrowdPulseDB = db;
+
+window.FirebaseAPI = {
+    signIn: signInWithEmailAndPassword,
+    signUp: createUserWithEmailAndPassword,
+    googleProvider: new GoogleAuthProvider(),
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged
+};
+
+// ── HEATMAP FALLBACK SIMULATOR ──
+// We retain the heatmap simulator so the visual demo continues working 
+// while you focus on connecting the authentication architecture.
 class MockFirebaseDB {
     constructor(centerLat, centerLng) {
         this.centerLat = centerLat;
         this.centerLng = centerLng;
         this.listeners = [];
-        this.pointsCount = 600; // Total simulated people/points
+        this.pointsCount = 600;
         this.interval = null;
         this.hotspots = [
-            { latOffset: 0.0003, lngOffset: -0.0003, baseDensity: 8, name: "Gate 3", label: "Gate 3 - High Crowd" }, // High density at Gate 3
-            { latOffset: -0.0002, lngOffset: 0.0004, baseDensity: 5, name: "Food Court", label: "Food Court - Moderate" }, // Moderate at food court
-            { latOffset: 0.0005, lngOffset: 0.0005, baseDensity: 2, name: "East Corridor", label: "East Corridor - Low Density" }, // Low
+            { latOffset: 0.0003, lngOffset: -0.0003, baseDensity: 8, name: "Gate 3", label: "Gate 3 - High Crowd" }, 
+            { latOffset: -0.0002, lngOffset: 0.0004, baseDensity: 5, name: "Food Court", label: "Food Court - Moderate" }, 
+            { latOffset: 0.0005, lngOffset: 0.0005, baseDensity: 2, name: "East Corridor", label: "East Corridor - Low Density" }, 
         ];
     }
 
     onSnapshot(callback) {
         this.listeners.push(callback);
         this.emitDelta();
-        
-        // Simulate real-time streaming every 3 seconds (debounced via request on UI side)
-        this.interval = setInterval(() => {
-            this.emitDelta();
-        }, 3500); 
+        this.interval = setInterval(() => { this.emitDelta(); }, 3500); 
     }
 
     emitDelta() {
-        // Generate pseudo-random realistic movement cluster data
         const data = [];
         this.hotspots.forEach(spot => {
-            // Fluctuate the base density
             let currentDensity = spot.baseDensity + (Math.random() * 2 - 1); 
             if (currentDensity < 1) currentDensity = 1;
             
@@ -37,12 +75,10 @@ class MockFirebaseDB {
                 data.push({
                     lat: this.centerLat + spot.latOffset + (Math.random() - 0.5) * 0.0008,
                     lng: this.centerLng + spot.lngOffset + (Math.random() - 0.5) * 0.0008,
-                    weight: Math.random() * 5 // Weight simulation
+                    weight: Math.random() * 5
                 });
             }
         });
-        
-        // Add random scatter points across the stadium
         for (let i = 0; i < 80; i++) {
             data.push({
                 lat: this.centerLat + (Math.random() - 0.5) * 0.0018,
@@ -50,8 +86,6 @@ class MockFirebaseDB {
                 weight: Math.random() * 2
             });
         }
-        
-        // Broadcast
         this.listeners.forEach(cb => cb(data));
     }
 }

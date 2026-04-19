@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -265,12 +265,12 @@
         <form class="auth-form" id="signinForm">
           <div class="auth-field">
             <label for="si-email">Email Address</label>
-            <input type="email" id="si-email" placeholder="you@example.com" required />
+            <input type="email" id="si-email" placeholder="you@example.com" aria-label="Email Address" required />
           </div>
           <div class="auth-field">
             <label for="si-password">Password</label>
             <div class="auth-input-wrap">
-              <input type="password" id="si-password" placeholder="Enter your password" required />
+              <input type="password" id="si-password" placeholder="Enter your password" aria-label="Password" aria-describedby="si-pass-err" required />
               <button type="button" class="auth-pw-toggle" onclick="togglePasswordVisibility('si-password', this)" aria-label="Toggle password visibility" title="Show password">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
               </button>
@@ -316,16 +316,16 @@
         <form class="auth-form" id="signupForm">
           <div class="auth-field">
             <label for="su-name">Full Name</label>
-            <input type="text" id="su-name" placeholder="Your full name" required />
+            <input type="text" id="su-name" placeholder="Your full name" aria-label="Full Name" required />
           </div>
           <div class="auth-field">
             <label for="su-email">Email Address</label>
-            <input type="email" id="su-email" placeholder="you@example.com" required />
+            <input type="email" id="su-email" placeholder="you@example.com" aria-label="Email Address" required />
           </div>
           <div class="auth-field">
             <label for="su-password">Password</label>
             <div class="auth-input-wrap">
-              <input type="password" id="su-password" placeholder="Create a strong password" required minlength="8" />
+              <input type="password" id="su-password" placeholder="Create a strong password" aria-label="Create Password" required minlength="8" />
               <button type="button" class="auth-pw-toggle" onclick="togglePasswordVisibility('su-password', this)" aria-label="Toggle password visibility" title="Show password">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
               </button>
@@ -334,7 +334,7 @@
           <div class="auth-field">
             <label for="su-confirm">Confirm Password</label>
             <div class="auth-input-wrap">
-              <input type="password" id="su-confirm" placeholder="Repeat your password" required />
+              <input type="password" id="su-confirm" placeholder="Repeat your password" aria-label="Confirm Password" required />
               <button type="button" class="auth-pw-toggle" onclick="togglePasswordVisibility('su-confirm', this)" aria-label="Toggle password visibility" title="Show password">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
               </button>
@@ -368,6 +368,9 @@
 
   <!-- Toast -->
   <div class="auth-toast" id="authToast"></div>
+
+  <!-- FIREBASE INTEGRATION -->
+  <script type="module" src="js/firebase.js"></script>
 
   <script>
     const AUTH_KEYS = {
@@ -450,123 +453,135 @@
       setTimeout(() => { window.location.href = 'navigation.html'; }, 250);
     }
 
-    function handleSignIn(e) {
+    async function handleSignIn(e) {
       e.preventDefault();
       clearFieldError('si-email-err');
       clearFieldError('si-pass-err');
 
+      if (!window.CrowdPulseAuth) {
+        showToast('❌ Firebase not initialized. Insert API keys into firebase.js!', true);
+        return;
+      }
+
       const emailInput    = document.getElementById('si-email');
       const passInput     = document.getElementById('si-password');
       const rememberInput = document.getElementById('si-remember');
-      const email         = (emailInput?.value || '').trim().toLowerCase();
+      const email         = (emailInput?.value || '').trim();
       const password      = passInput?.value || '';
       const rememberMe    = !!rememberInput?.checked;
       const btn           = document.getElementById('si-btn');
 
-      const accounts = getAccounts();
+      btn.textContent = 'Authenticating…'; btn.disabled = true;
 
-      /* Check if account exists */
-      if (!accounts[email]) {
-        setFieldError('si-email-err', '⚠️ No account found. Please sign up first.');
-        showToast('❌ No account found — please sign up first.', true);
-        return;
-      }
-
-      /* Check password */
-      if (accounts[email].password !== password) {
-        setFieldError('si-pass-err', '⚠️ Incorrect password.');
-        showToast('❌ Incorrect password. Please try again.', true);
-        return;
-      }
-
-      btn.textContent = 'Signing in…'; btn.disabled = true;
-      setTimeout(() => {
-        const user = accounts[email];
+      try {
+        const userCredential = await window.FirebaseAPI.signIn(window.CrowdPulseAuth, email, password);
+        const user = userCredential.user;
+        
+        // Optimistic UI Cache Updates
         localStorage.setItem(AUTH_KEYS.IS_AUTHENTICATED, 'true');
-        localStorage.setItem(AUTH_KEYS.REMEMBERED_EMAIL, email);
-        if (user.name) localStorage.setItem('crowdpulse_user_name', user.name);
-        if (rememberMe) {
-          localStorage.setItem(AUTH_KEYS.REMEMBER_ME, 'true');
-        } else {
-          localStorage.setItem(AUTH_KEYS.REMEMBER_ME, 'false');
-        }
-        if (!localStorage.getItem('crowdpulse_member_since')) {
-          localStorage.setItem('crowdpulse_member_since', user.since || new Date().toISOString());
-        }
+        localStorage.setItem(AUTH_KEYS.REMEMBERED_EMAIL, user.email);
+        if (user.displayName) localStorage.setItem('crowdpulse_user_name', user.displayName);
+        localStorage.setItem(AUTH_KEYS.REMEMBER_ME, rememberMe ? 'true' : 'false');
+        
         btn.textContent = '✓ Welcome back!';
         btn.style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
-        showToast('🎉 Signed in successfully! Redirecting…');
+        showToast('🎉 Signed in securely via Firebase! Redirecting…');
         setTimeout(redirectToHome, 1400);
-      }, 900);
+
+      } catch (error) {
+        btn.textContent = 'Sign In →'; btn.disabled = false;
+        
+        if (error.code === 'auth/user-not-found') {
+          setFieldError('si-email-err', '⚠️ No account found. Please sign up first.');
+        } else if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+          setFieldError('si-pass-err', '⚠️ Incorrect credentials. Please try again.');
+        } else if (error.code === 'auth/invalid-api-key') {
+           showToast('❌ Invalid Firebase API Key. Please insert your key into firebase.js.', true);
+        } else {
+          showToast(`❌ Login failed: ${error.message}`, true);
+        }
+      }
     }
 
     /* ── Sign Up ── */
-    function handleSignUp(e) {
+    async function handleSignUp(e) {
       e.preventDefault();
+      if (!window.CrowdPulseAuth) { showToast('❌ Firebase API Keys missing.', true); return; }
+
       const pw    = document.getElementById('su-password').value;
       const cf    = document.getElementById('su-confirm').value;
 
-      if (pw !== cf) {
-        showToast('❌ Passwords do not match.', true);
-        return;
-      }
-      if (pw.length < 8) {
-        showToast('❌ Password must be at least 8 characters.', true);
-        return;
-      }
+      if (pw !== cf) { showToast('❌ Passwords do not match.', true); return; }
+      if (pw.length < 8) { showToast('❌ Password must be at least 8 characters.', true); return; }
 
       const nameInput  = document.getElementById('su-name');
       const emailInput = document.getElementById('su-email');
       const name       = (nameInput?.value || '').trim();
-      const email      = (emailInput?.value || '').trim().toLowerCase();
+      const email      = (emailInput?.value || '').trim();
       const btn        = document.getElementById('su-btn');
 
-      const accounts = getAccounts();
-      if (accounts[email]) {
-        showToast('⚠️ An account with this email already exists. Please sign in.', true);
-        setTimeout(() => switchAuth('signin'), 1500);
-        return;
-      }
-
       btn.textContent = 'Creating account…'; btn.disabled = true;
-      setTimeout(() => {
-        const since = new Date().toISOString();
-        accounts[email] = { name, email, password: pw, since };
-        saveAccounts(accounts);
 
+      try {
+        const userCredential = await window.FirebaseAPI.signUp(window.CrowdPulseAuth, email, pw);
+        const user = userCredential.user;
+
+        // Optimistic UI fallback cache setup
         localStorage.setItem(AUTH_KEYS.IS_AUTHENTICATED, 'true');
         if (name) localStorage.setItem('crowdpulse_user_name', name);
         localStorage.setItem(AUTH_KEYS.REMEMBER_ME, 'true');
-        localStorage.setItem(AUTH_KEYS.REMEMBERED_EMAIL, email);
-        localStorage.setItem('crowdpulse_member_since', since);
+        localStorage.setItem(AUTH_KEYS.REMEMBERED_EMAIL, user.email);
+        localStorage.setItem('crowdpulse_member_since', new Date().toISOString());
 
         btn.textContent = '✓ Account created!';
         btn.style.background = 'linear-gradient(135deg,#22c55e,#16a34a)';
-        showToast('🎉 Account created! Welcome to CrowdPulse!');
+        showToast('🎉 Account secured inside Firebase! Welcome to CrowdPulse!');
         setTimeout(redirectToHome, 1500);
-      }, 1100);
+
+      } catch (error) {
+        btn.textContent = 'Create Account →'; btn.disabled = false;
+        if (error.code === 'auth/email-already-in-use') {
+          showToast('⚠️ An account with this email already exists. Please sign in.', true);
+          setTimeout(() => switchAuth('signin'), 1500);
+        } else if (error.code === 'auth/invalid-api-key') {
+          showToast('❌ Configuration error: Missing Firebase API Key.', true);
+        } else {
+          showToast(`❌ Registration Error: ${error.message}`, true);
+        }
+      }
     }
 
-    /* ── Social Login (registers & signs in) ── */
-    function socialLogin(btn, provider) {
-      btn.textContent = 'Connecting…';
-      setTimeout(() => {
-        const demoEmail = provider.toLowerCase() + '_user@crowdpulse.demo';
-        const demoName  = provider + ' User';
-        const accounts  = getAccounts();
-        if (!accounts[demoEmail]) {
-          accounts[demoEmail] = { name: demoName, email: demoEmail, password: '', since: new Date().toISOString() };
-          saveAccounts(accounts);
+    /* ── Social Login (Firebase Provider) ── */
+    async function socialLogin(btn, providerStr) {
+      if (!window.CrowdPulseAuth) { showToast('❌ Firebase API Keys missing.', true); return; }
+
+      btn.textContent = 'Connecting via OAuth…';
+      try {
+        let provider;
+        if (providerStr === 'Google') provider = window.FirebaseAPI.googleProvider;
+        // if Apple, you'd init Apple auth provider accordingly
+
+        if (provider) {
+          const result = await window.FirebaseAPI.signInWithPopup(window.CrowdPulseAuth, provider);
+          const user = result.user;
+
+          localStorage.setItem(AUTH_KEYS.IS_AUTHENTICATED, 'true');
+          localStorage.setItem(AUTH_KEYS.REMEMBERED_EMAIL, user.email);
+          if (user.displayName) localStorage.setItem('crowdpulse_user_name', user.displayName);
+          localStorage.setItem(AUTH_KEYS.REMEMBER_ME, 'true');
+          
+          btn.textContent = '✓ Connected!';
+          showToast(`🎉 Securely signed in with ${providerStr}!`);
+          setTimeout(redirectToHome, 1200);
+        } else {
+             showToast(`❌ ${providerStr} provider not configured yet.`, true);
+             btn.innerHTML = providerStr;
         }
-        localStorage.setItem(AUTH_KEYS.IS_AUTHENTICATED, 'true');
-        localStorage.setItem(AUTH_KEYS.REMEMBERED_EMAIL, demoEmail);
-        localStorage.setItem('crowdpulse_user_name', accounts[demoEmail].name);
-        localStorage.setItem(AUTH_KEYS.REMEMBER_ME, 'true');
-        localStorage.setItem('crowdpulse_member_since', accounts[demoEmail].since);
-        btn.textContent = '✓ Connected!';
-        showToast('🎉 Signed in with ' + provider + '!');
-        setTimeout(redirectToHome, 1200);
-      }, 1200);
+
+      } catch (error) {
+        btn.innerHTML = providerStr; // Reset button
+        showToast(`❌ OAuth Error: ${error.message}`, true);
+      }
     }
 
     function togglePasswordVisibility(inputId, btnEl) {
