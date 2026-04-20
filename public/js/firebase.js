@@ -7,21 +7,38 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase
 
 let app, auth, db;
 
-try {
-    const response = await fetch('/api/config');
-    if (!response.ok) throw new Error("Failed to fetch Firebase config from backend.");
-    
-    const data = await response.json();
-    const firebaseConfig = data.firebaseConfig;
+const FALLBACK_CONFIG = {
+    apiKey: "AIzaSyC3-sdajkzX1q89z-sqnptBbWQ5DuusH0s",
+    authDomain: "crowdpulse-f2ff0.firebaseapp.com",
+    projectId: "crowdpulse-f2ff0",
+    storageBucket: "crowdpulse-f2ff0.firebasestorage.app",
+    messagingSenderId: "108417955219",
+    appId: "1:108417955219:web:67c4bea7f2fec5abaf6466"
+};
 
-    if (!firebaseConfig.apiKey) {
-        console.warn("[Firebase] Missing API Key from /api/config. Using fallback initialization.");
+try {
+    let apiBase = '';
+    if (window.location.protocol === 'file:') {
+        apiBase = 'http://localhost:3001';
+    }
+    
+    let firebaseConfig = FALLBACK_CONFIG;
+    try {
+        const response = await fetch(`${apiBase}/api/config`);
+        if (response.ok) {
+            const data = await response.json();
+            if (data.firebaseConfig && data.firebaseConfig.apiKey) {
+                firebaseConfig = data.firebaseConfig;
+            }
+        }
+    } catch (e) {
+        console.warn("[Firebase] Could not fetch /api/config. Using fallback development keys.");
     }
 
     app = initializeApp(firebaseConfig);
     auth = getAuth(app);
     db = getFirestore(app);
-    console.log("[Firebase] Successfully Initialized Official Core APIs via backend config.");
+    console.log("[Firebase] Successfully Initialized Official Core APIs.");
     
 } catch (error) {
     console.error("[Firebase] Initialization Failed. Did you setup your API keys?", error);
